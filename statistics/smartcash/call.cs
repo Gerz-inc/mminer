@@ -1,33 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using baseFunc;
 using Newtonsoft.Json.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 
 namespace smartcash
 {
     public class Call
     {
-        private static string dll_name;
-        private static string ini_file_name;
+        private string dll_name;
+        private string ini_file_name;
 
-        private static string api_key;
-        private static int work_pool = 0;
-        private static List<string> pools = new List<string>();
-        private static double diff_min = 100;
-        private static double diff_max = 400;
+        public string api_key;
+        public int work_pool = 0;
+        public List<string> pools = new List<string>();
+        public double diff_min = 100;
+        public double diff_max = 400;
 
-        private static int req_timeout = 10000;
-        private static DateTime req_date;
-        private static DateTime res_date;
-        private static JObject response;
+        private int req_timeout = 10000;
+        private DateTime req_date;
+        private DateTime res_date;
+        private JObject response;
 
         public Call()
         {
@@ -36,7 +30,7 @@ namespace smartcash
             ini_file_name = Path.Combine(assemblyFolder, dll_name + ".ini");
 
             if (ReadSettings())
-                GetData(out work_pool);
+                GetDataIfNeeded();
         }
 
         #region Settings
@@ -44,10 +38,9 @@ namespace smartcash
         public void ShowSettings()
         {
             new Main(this).ShowDialog();
-
         }
 
-        private static bool ReadSettings()
+        public bool ReadSettings()
         {
             var ini = new IniFile(ini_file_name);
 
@@ -69,7 +62,7 @@ namespace smartcash
             return api_key.Length > 0;
         }
 
-        private void SaveSettings()
+        public void SaveSettings()
         {
             var ini = new IniFile(ini_file_name);
 
@@ -95,7 +88,15 @@ namespace smartcash
 
         #region API
 
-        public bool GetData(out int pool_i)
+        private bool GetDataIfNeeded()
+        {
+            if ((DateTime.Now - res_date).TotalSeconds < 60)
+                return true;
+
+            return GetData(out work_pool);
+        }
+
+        private bool GetData(out int pool_i)
         {
             int pool = work_pool;
             if (pool > pools.Count || pool == -1) pool = 0;
@@ -121,40 +122,23 @@ namespace smartcash
             return false;
         }
 
-        public double GetDifficulty()
+        public double GetDifficulty(out double rate)
         {
-            //GetData(out work_pool);
+            if (GetDataIfNeeded())
+            {
+                int rate_max = 5,
+                    rate_min = 0;
 
-
-            /*
-
-                        {
-                            pool_i = pool;
-
-                            // Проверяем статус ответа
-                            string status = (string)json_ar.SelectToken("status").Value<string>();
-                            int status_int = -1; Int32.TryParse(status, out status_int);
-                            if (status_int == 1) return true;
-                            else
-                            {
-                                if (response.SelectToken("error") != null)
-                                    MessageBox.Show(response.SelectToken("error").ToString(), "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
-                                Trace.WriteLine("Request response: " + query + "\n" + response.ToString());
-                            }
-
-                            return true;
-                        }
-
-                        getpoolstatus data networkdiff
-                        //json_ar = JObject.Parse(json_str);
-                        */
-
-            return 0;
+                double diff = response.SelectToken("getpoolstatus.data.networkdiff").Value<double>() / 1000;
+                rate = (rate_max - rate_min) / (diff_max - diff_min) * (diff - diff_min);
+                return diff;
+            }
+            else
+            {
+                rate = 0;
+                return -1;
+            }
         }
-
-        
-
-
 
         #endregion
     }

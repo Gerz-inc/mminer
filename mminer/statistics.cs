@@ -28,8 +28,7 @@ namespace mminer
         private void button1_Click(object sender, EventArgs e)
         {
             System.Reflection.Assembly DLL = null;
-            //string p = Application.StartupPath + "\\statistics\\smartcash.dll";
-            string p = Application.StartupPath + "\\smartcash.dll";
+            string p = Application.StartupPath + "\\statistics\\smartcash.dll";
             if (File.Exists(p))
             {
                 DLL = System.Reflection.Assembly.LoadFile(p);
