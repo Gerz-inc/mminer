@@ -5,7 +5,7 @@
 * sqlite
 
 
-## 2. 
+## 2. Installing
 
 ### 2.1 Сloning of a repository
 
