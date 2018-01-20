@@ -11,6 +11,10 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using System.Net;
+
+//using System.Reflection;
+//using System.Runtime.InteropServices;
 
 namespace baseFunc
 {
@@ -1134,6 +1138,99 @@ namespace baseFunc
             else return -1;
         }
 
+
+
+
+    }
+
+    public class IniFile
+    {
+        string Path; //Имя файла.
+
+        [DllImport("kernel32")] // Подключаем kernel32.dll и описываем его функцию WritePrivateProfilesString
+        static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
+
+        [DllImport("kernel32")] // Еще раз подключаем kernel32.dll, а теперь описываем функцию GetPrivateProfileString
+        static extern int GetPrivateProfileString(string Section, string Key, string Default, StringBuilder RetVal, int Size, string FilePath);
+
+        // С помощью конструктора записываем пусть до файла и его имя.
+        public IniFile(string IniPath)
+        {
+            Path = new FileInfo(IniPath).FullName.ToString();
+        }
+
+        //Читаем ini-файл и возвращаем значение указного ключа из заданной секции.
+        public string Read(string Section, string Key)
+        {
+            var RetVal = new StringBuilder(255);
+            GetPrivateProfileString(Section, Key, "", RetVal, 255, Path);
+            return RetVal.ToString();
+        }
+
+        //Записываем в ini-файл. Запись происходит в выбранную секцию в выбранный ключ.
+        public void Write(string Section, string Key, string Value)
+        {
+            WritePrivateProfileString(Section, Key, Value, Path);
+        }
+
+        //Удаляем ключ из выбранной секции.
+        public void DeleteKey(string Section, string Key)
+        {
+            Write(Section, Key, null);
+        }
+
+        //Удаляем выбранную секцию
+        public void DeleteSection(string Section)
+        {
+            Write(Section, null, null);
+        }
+
+        //Проверяем, есть ли такой ключ, в этой секции
+        public bool KeyExists(string Section, string Key)
+        {
+            string txt = Read(Section, Key);
+            return txt.Length > 0;
+        }
+    }
+
+    public class Json
+    {
+        // Запрос
+        public static bool? Request(string query, out JObject response, bool escaped = false, int timeout = 10000)
+        {
+            response = new JObject();
+
+            try
+            {
+                if (!escaped) query = Uri.EscapeUriString(query);
+                Console.WriteLine("Request: " + query);
+                //Trace.WriteLine("Request: " + query);
+
+                // Send request
+                Uri url = new Uri(query);
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                req.Timeout = timeout;
+                WebResponse resp = req.GetResponse();
+                Stream stream = resp.GetResponseStream();
+                StreamReader sr = new StreamReader(stream);
+                string json_str = sr.ReadToEnd();
+
+                // Maybe jsonp
+                Regex r = new Regex("^[^(]+\\((.+)\\)$", RegexOptions.IgnoreCase);
+                Match m = r.Match(json_str);
+                if (m.Success)
+                    json_str = m.Groups[1].Captures[0].ToString();
+
+                // Parse response
+                response = JObject.Parse(json_str);
+                return response != null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Request error: " + query + "\n" + ex.Message);
+                //Trace.WriteLine("Request error: " + query + "\n" + ex.Message);
+                return null;
+            }
+        }
     }
 }
-

@@ -1,6 +1,6 @@
 ﻿namespace smartcash
 {
-    partial class main
+    partial class Main
     {
         /// <summary>
         /// Required designer variable.
@@ -37,7 +37,7 @@
             this.ClientSize = new System.Drawing.Size(451, 330);
             this.Name = "main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "main";
+            this.Text = "SmartCash (SMART)";
             this.ResumeLayout(false);
 
         }
