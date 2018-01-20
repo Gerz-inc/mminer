@@ -1,0 +1,3 @@
+[submodule "miners/ccminer"]
+	path = miners/ccminer
+	url = https://github.com/KlausT/ccminer
