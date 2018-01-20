@@ -11,8 +11,7 @@ namespace smartcash
     {
         private string dll_name;
         private string ini_file_name;
-
-        public string api_key;
+        
         public int work_pool = 0;
         public List<string> pools = new List<string>();
         public double diff_min = 100;
@@ -52,14 +51,11 @@ namespace smartcash
                 pools.Add(pool);
             }
 
-            // API
-            api_key = ini.Read("API", "key");
-
             // Difficulty
             Double.TryParse(ini.Read("Difficulty", "min").Replace(".", ","), out diff_min);
             Double.TryParse(ini.Read("Difficulty", "max").Replace(".", ","), out diff_max);
 
-            return api_key.Length > 0;
+            return true;
         }
 
         public void SaveSettings()
@@ -76,12 +72,9 @@ namespace smartcash
                 pool_i += 1;
             }
 
-            // API
-            ini.Write("API", "key", api_key);
-
             // Difficulty
-            ini.Write("Difficulty", "diff_min", diff_min.ToString());
-            ini.Write("Difficulty", "diff_max", diff_max.ToString());
+            ini.Write("Difficulty", "min", diff_min.ToString());
+            ini.Write("Difficulty", "max", diff_max.ToString());
         }
 
         #endregion
@@ -108,7 +101,7 @@ namespace smartcash
             {
                 first = false;
                 req_date = new DateTime();
-                string query = String.Format("https://{0}/index.php?page=api&action=getpoolstatus&api_key={1}", pools[pool], api_key);
+                string query = pools[pool];
                 if (baseFunc.Json.Request(query, out response, false, req_timeout) == true)
                 {
                     res_date = new DateTime();
@@ -122,7 +115,7 @@ namespace smartcash
             return false;
         }
 
-        public double GetDifficulty(out double rate)
+        public KeyValuePair<double, double> GetDifficulty()
         {
             if (GetDataIfNeeded())
             {
@@ -130,13 +123,12 @@ namespace smartcash
                     rate_min = 0;
 
                 double diff = response.SelectToken("getpoolstatus.data.networkdiff").Value<double>() / 1000;
-                rate = (rate_max - rate_min) / (diff_max - diff_min) * (diff - diff_min);
-                return diff;
+                double rate = (rate_max - rate_min) / (diff_max - diff_min) * (diff - diff_min);
+                return new KeyValuePair<double, double>(diff, rate);
             }
             else
             {
-                rate = 0;
-                return -1;
+                return new KeyValuePair<double, double>(-1, 0);
             }
         }
 
