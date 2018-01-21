@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.deleteButton = new System.Windows.Forms.Button();
+            this.addressRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.modifyButton = new System.Windows.Forms.Button();
+            this.addButton = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             this.diffMaxTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.diffMinTextBox = new System.Windows.Forms.TextBox();
@@ -40,10 +45,6 @@
             this.button5 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.rateLabel = new System.Windows.Forms.Label();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
-            this.pollAddressTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,20 +52,77 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.button6);
-            this.groupBox1.Controls.Add(this.button7);
+            this.groupBox1.Controls.Add(this.deleteButton);
+            this.groupBox1.Controls.Add(this.addressRichTextBox);
+            this.groupBox1.Controls.Add(this.modifyButton);
+            this.groupBox1.Controls.Add(this.addButton);
             this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.pollAddressTextBox);
             this.groupBox1.Controls.Add(this.diffMaxTextBox);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.diffMinTextBox);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(360, 104);
+            this.groupBox1.Size = new System.Drawing.Size(360, 154);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
+            // 
+            // deleteButton
+            // 
+            this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.deleteButton.Location = new System.Drawing.Point(130, 122);
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(55, 23);
+            this.deleteButton.TabIndex = 17;
+            this.deleteButton.Text = "Delete";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Visible = false;
+            this.deleteButton.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // addressRichTextBox
+            // 
+            this.addressRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.addressRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.addressRichTextBox.Location = new System.Drawing.Point(130, 46);
+            this.addressRichTextBox.Name = "addressRichTextBox";
+            this.addressRichTextBox.Size = new System.Drawing.Size(222, 70);
+            this.addressRichTextBox.TabIndex = 16;
+            this.addressRichTextBox.Text = "";
+            // 
+            // modifyButton
+            // 
+            this.modifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.modifyButton.Location = new System.Drawing.Point(191, 122);
+            this.modifyButton.Name = "modifyButton";
+            this.modifyButton.Size = new System.Drawing.Size(80, 23);
+            this.modifyButton.TabIndex = 15;
+            this.modifyButton.Text = "Modify";
+            this.modifyButton.UseVisualStyleBackColor = true;
+            this.modifyButton.Visible = false;
+            this.modifyButton.Click += new System.EventHandler(this.modifyButton_Click);
+            // 
+            // addButton
+            // 
+            this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.addButton.Location = new System.Drawing.Point(277, 122);
+            this.addButton.Name = "addButton";
+            this.addButton.Size = new System.Drawing.Size(75, 23);
+            this.addButton.TabIndex = 14;
+            this.addButton.Text = "Add";
+            this.addButton.UseVisualStyleBackColor = true;
+            this.addButton.Click += new System.EventHandler(this.addButton_Click);
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(79, 49);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(45, 13);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "Address";
             // 
             // diffMaxTextBox
             // 
@@ -113,9 +171,9 @@
             this.columnHeader10});
             this.poolsListView.FullRowSelect = true;
             this.poolsListView.GridLines = true;
-            this.poolsListView.Location = new System.Drawing.Point(12, 122);
+            this.poolsListView.Location = new System.Drawing.Point(12, 172);
             this.poolsListView.Name = "poolsListView";
-            this.poolsListView.Size = new System.Drawing.Size(360, 148);
+            this.poolsListView.Size = new System.Drawing.Size(360, 98);
             this.poolsListView.TabIndex = 5;
             this.poolsListView.UseCompatibleStateImageBehavior = false;
             this.poolsListView.View = System.Windows.Forms.View.Details;
@@ -178,45 +236,6 @@
             this.rateLabel.Text = "Difficulty";
             this.rateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // button6
-            // 
-            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.Location = new System.Drawing.Point(196, 72);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
-            this.button6.TabIndex = 15;
-            this.button6.Text = "Modify";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Visible = false;
-            // 
-            // button7
-            // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Location = new System.Drawing.Point(277, 72);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(75, 23);
-            this.button7.TabIndex = 14;
-            this.button7.Text = "Add";
-            this.button7.UseVisualStyleBackColor = true;
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(79, 49);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(45, 13);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "Address";
-            // 
-            // pollAddressTextBox
-            // 
-            this.pollAddressTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pollAddressTextBox.Location = new System.Drawing.Point(130, 46);
-            this.pollAddressTextBox.Name = "pollAddressTextBox";
-            this.pollAddressTextBox.Size = new System.Drawing.Size(222, 20);
-            this.pollAddressTextBox.TabIndex = 12;
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -255,9 +274,10 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox diffMinTextBox;
         private System.Windows.Forms.Label rateLabel;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button modifyButton;
+        private System.Windows.Forms.Button addButton;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox pollAddressTextBox;
+        private System.Windows.Forms.RichTextBox addressRichTextBox;
+        private System.Windows.Forms.Button deleteButton;
     }
 }

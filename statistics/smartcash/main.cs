@@ -16,13 +16,16 @@ namespace smartcash
     public partial class Main : Form
     {
         private Call parent_dll;
+        private int sel_pool = -1;
 
         public Main(Call dll)
         {
             InitializeComponent();
-            rateLabel.Text = "";
-
             parent_dll = dll;
+
+            deleteButton.Visible = false;
+            modifyButton.Visible = false;
+            rateLabel.Text = "";
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -32,9 +35,7 @@ namespace smartcash
             diffMinTextBox.Text = parent_dll.diff_min.ToString();
             diffMaxTextBox.Text = parent_dll.diff_max.ToString();
 
-            poolsListView.Items.Clear();
-            foreach (var it in parent_dll.pools)
-                poolsListView.Items.Add(it);
+            reloadPoolsList();
         }
 
         private void textBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -67,10 +68,9 @@ namespace smartcash
 
         private void button5_Click(object sender, EventArgs e)
         {
-            double rate = 0;
             var diff = parent_dll.GetDifficulty();
             if (diff.Key >= 0)
-                rateLabel.Text = String.Format("Difficulty {0:0.###} [{1:0.##}]", diff, rate);
+                rateLabel.Text = String.Format("Difficulty {0:0.###} [{1:0.##}]", diff.Key, diff.Value);
             else rateLabel.Text = "Something wrong";
         }
 
@@ -83,7 +83,46 @@ namespace smartcash
         {
             var idxs = (sender as ListView).SelectedIndices;
             int idx = idxs.Count > 0 ? idxs[0] : -1;
-            pollAddressTextBox.Text = idx > -1 ? parent_dll.pools[idx] : "";
+            addressRichTextBox.Text = idx > -1 ? parent_dll.pools[idx] : "";
+            sel_pool = idx;
+
+            deleteButton.Visible = sel_pool >= 0;
+            modifyButton.Visible = sel_pool >= 0;
+        }
+
+        private void modifyButton_Click(object sender, EventArgs e)
+        {
+            if (sel_pool < 0 || addressRichTextBox.Text == "") return;
+            parent_dll.pools[sel_pool] = addressRichTextBox.Text;
+            
+            reloadPoolsList();
+        }
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+            if (addressRichTextBox.Text == "") return;
+            parent_dll.pools.Add(addressRichTextBox.Text);
+            
+            reloadPoolsList();
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (sel_pool < 0) return;
+            parent_dll.pools.RemoveAt(sel_pool);
+
+            reloadPoolsList();
+        }
+
+        private void reloadPoolsList()
+        {
+            sel_pool = -1;
+
+            poolsListView.Items.Clear();
+            foreach (var it in parent_dll.pools)
+                poolsListView.Items.Add(it);
+
+            deleteButton.Visible = false;
+            modifyButton.Visible = false;
         }
     }
 }
