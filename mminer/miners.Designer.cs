@@ -1,6 +1,6 @@
 ﻿namespace mminer
 {
-    partial class statistics
+    partial class miners
     {
         /// <summary>
         /// Required designer variable.
@@ -41,26 +41,26 @@
             this.listView1.Location = new System.Drawing.Point(12, 12);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(434, 291);
-            this.listView1.TabIndex = 1;
+            this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
             // 
             // columnHeader9
             // 
-            this.columnHeader9.Text = "Finded statistics";
+            this.columnHeader9.Text = "Finded miners";
             this.columnHeader9.Width = 400;
             // 
-            // statistics
+            // miners
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(458, 313);
+            this.ClientSize = new System.Drawing.Size(455, 313);
             this.Controls.Add(this.listView1);
-            this.Name = "statistics";
+            this.Name = "miners";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Statistics";
-            this.Load += new System.EventHandler(this.statistics_Load);
+            this.Text = "Miners";
+            this.Load += new System.EventHandler(this.miners_Load);
             this.ResumeLayout(false);
 
         }

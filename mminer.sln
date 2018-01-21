@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mminer", "mminer\mminer.csproj", "{68971B7A-5F68-4C63-8B2B-E0A450651C1D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "baseFunc", "baseFunc\baseFunc.csproj", "{94F0E925-56A6-4B42-9403-201B53ED0DA5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "smartcash", "statistics\smartcash\smartcash.csproj", "{58714A47-E13E-4715-BFEE-F161F30B9828}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ccminer", "miners\ccminer\ccminer.csproj", "{59D3963E-2AF1-4F14-BF79-48E776A385FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,8 +57,23 @@ Global
 		{58714A47-E13E-4715-BFEE-F161F30B9828}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{58714A47-E13E-4715-BFEE-F161F30B9828}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{58714A47-E13E-4715-BFEE-F161F30B9828}.Release|x86.ActiveCfg = Release|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {351A3FEF-0F86-4FD9-A05A-EE3D7A207E8D}
 	EndGlobalSection
 EndGlobal

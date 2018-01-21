@@ -13,16 +13,16 @@ using System.Net;
 
 namespace mminer
 {
-    public partial class statistics : Form
+    public partial class miners : Form
     {
-        public statistics()
+        public miners()
         {
             InitializeComponent();
         }
 
-        private void statistics_Load(object sender, EventArgs e)
+        private void miners_Load(object sender, EventArgs e)
         {
-            foreach(string it in dlls.get_statistics())
+            foreach (string it in dlls.get_miners())
             {
                 ListViewItem item = new ListViewItem(it);
                 listView1.Items.Add(item);
@@ -57,7 +57,7 @@ namespace mminer
             string id = listView1.Items[curr_item].Text;
 
             System.Reflection.Assembly DLL = null;
-            string p = Application.StartupPath + dlls.PATH_STATISTICS + id +".dll";
+            string p = Application.StartupPath + dlls.PATH_MINERS + id + ".dll";
             if (File.Exists(p))
             {
                 DLL = System.Reflection.Assembly.LoadFile(p);

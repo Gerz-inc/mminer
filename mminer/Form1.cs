@@ -40,5 +40,15 @@ namespace mminer
         {
             new statistics().ShowDialog();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            dlls.load_ddls();
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            new miners().ShowDialog();
+        }
     }
 }

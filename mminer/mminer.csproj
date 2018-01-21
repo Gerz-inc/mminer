@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="db_sqlite.cs" />
+    <Compile Include="dlls.cs" />
     <Compile Include="exchanges.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -104,6 +105,12 @@
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="miners.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="miners.Designer.cs">
+      <DependentUpon>miners.cs</DependentUpon>
     </Compile>
     <Compile Include="pools.cs">
       <SubType>Form</SubType>
@@ -130,6 +137,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="miners.resx">
+      <DependentUpon>miners.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="pools.resx">
       <DependentUpon>pools.cs</DependentUpon>
@@ -169,10 +179,6 @@
       <Project>{94f0e925-56a6-4b42-9403-201b53ed0da5}</Project>
       <Name>baseFunc</Name>
     </ProjectReference>
-    <ProjectReference Include="..\statistics\smartcash\smartcash.csproj">
-      <Project>{58714a47-e13e-4715-bfee-f161f30b9828}</Project>
-      <Name>smartcash</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -188,8 +194,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>md "./statistics"
-move "smartcash.*" "./statistics/"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
