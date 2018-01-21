@@ -28,9 +28,13 @@ namespace smartcash
         private void Main_Load(object sender, EventArgs e)
         {
             parent_dll.ReadSettings();
-            apiKeyTextBox.Text = parent_dll.api_key;
+
             diffMinTextBox.Text = parent_dll.diff_min.ToString();
             diffMaxTextBox.Text = parent_dll.diff_max.ToString();
+
+            poolsListView.Items.Clear();
+            foreach (var it in parent_dll.pools)
+                poolsListView.Items.Add(it);
         }
 
         private void textBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -56,7 +60,6 @@ namespace smartcash
 
         private void button3_Click(object sender, EventArgs e)
         {
-            parent_dll.api_key = apiKeyTextBox.Text;
             Double.TryParse(diffMinTextBox.Text, out parent_dll.diff_min);
             Double.TryParse(diffMaxTextBox.Text, out parent_dll.diff_max);
             parent_dll.SaveSettings();
@@ -65,14 +68,22 @@ namespace smartcash
         private void button5_Click(object sender, EventArgs e)
         {
             double rate = 0;
-            double diff = parent_dll.GetDifficulty(out rate);
-            if (diff >= 0) rateLabel.Text = String.Format("Difficulty {0:0.###} [{1:#.#}]", diff, rate);
+            var diff = parent_dll.GetDifficulty();
+            if (diff.Key >= 0)
+                rateLabel.Text = String.Format("Difficulty {0:0.###} [{1:0.##}]", diff, rate);
             else rateLabel.Text = "Something wrong";
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var idxs = (sender as ListView).SelectedIndices;
+            int idx = idxs.Count > 0 ? idxs[0] : -1;
+            pollAddressTextBox.Text = idx > -1 ? parent_dll.pools[idx] : "";
         }
     }
 }
