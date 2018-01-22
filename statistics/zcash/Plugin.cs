@@ -5,7 +5,7 @@ using baseFunc;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 
-namespace smartcash
+namespace zcash
 {
     public class Plugin
     {
@@ -122,7 +122,7 @@ namespace smartcash
                 int rate_max = 5,
                     rate_min = 0;
 
-                double diff = response.SelectToken("getpoolstatus.data.networkdiff").Value<double>() / 1000;
+                double diff = response.SelectToken("difficulty").Value<double>() / 1000;
                 double rate = (rate_max - rate_min) / (diff_max - diff_min) * (diff - diff_min);
                 rate = rate > rate_max ? rate_max : (rate < rate_min ? rate_min : rate);
                 return new KeyValuePair<double, double>(diff, rate);

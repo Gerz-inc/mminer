@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2024
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mminer", "mminer\mminer.csproj", "{68971B7A-5F68-4C63-8B2B-E0A450651C1D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ccminer", "miners\ccminer\ccminer.csproj", "{59D3963E-2AF1-4F14-BF79-48E776A385FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EXLV", "EXLV\EXLV.csproj", "{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zcash", "statistics\zcash\zcash.csproj", "{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,18 @@ Global
 		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|x86.ActiveCfg = Release|Any CPU
 		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|x86.Build.0 = Release|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Debug|x86.Build.0 = Debug|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|x86.ActiveCfg = Release|Any CPU
+		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
