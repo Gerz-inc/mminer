@@ -15,13 +15,13 @@ namespace smartcash
 {
     public partial class Main : Form
     {
-        private Call parent_dll;
+        private Plugin plugin;
         private int sel_pool = -1;
 
-        public Main(Call dll)
+        public Main(Plugin plugin)
         {
             InitializeComponent();
-            parent_dll = dll;
+            this.plugin = plugin;
 
             deleteButton.Visible = false;
             modifyButton.Visible = false;
@@ -30,10 +30,10 @@ namespace smartcash
 
         private void Main_Load(object sender, EventArgs e)
         {
-            parent_dll.ReadSettings();
+            plugin.ReadSettings();
 
-            diffMinTextBox.Text = parent_dll.diff_min.ToString();
-            diffMaxTextBox.Text = parent_dll.diff_max.ToString();
+            diffMinTextBox.Text = plugin.diff_min.ToString();
+            diffMaxTextBox.Text = plugin.diff_max.ToString();
 
             reloadPoolsList();
         }
@@ -61,14 +61,14 @@ namespace smartcash
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Double.TryParse(diffMinTextBox.Text, out parent_dll.diff_min);
-            Double.TryParse(diffMaxTextBox.Text, out parent_dll.diff_max);
-            parent_dll.SaveSettings();
+            Double.TryParse(diffMinTextBox.Text, out plugin.diff_min);
+            Double.TryParse(diffMaxTextBox.Text, out plugin.diff_max);
+            plugin.SaveSettings();
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            var diff = parent_dll.GetDifficulty();
+            var diff = plugin.GetDifficulty();
             if (diff.Key >= 0)
                 rateLabel.Text = String.Format("Difficulty {0:0.###} [{1:0.##}]", diff.Key, diff.Value);
             else rateLabel.Text = "Something wrong";
@@ -83,7 +83,7 @@ namespace smartcash
         {
             var idxs = (sender as ListView).SelectedIndices;
             int idx = idxs.Count > 0 ? idxs[0] : -1;
-            addressRichTextBox.Text = idx > -1 ? parent_dll.pools[idx] : "";
+            addressRichTextBox.Text = idx > -1 ? plugin.pools[idx] : "";
             sel_pool = idx;
 
             deleteButton.Visible = sel_pool >= 0;
@@ -93,7 +93,7 @@ namespace smartcash
         private void modifyButton_Click(object sender, EventArgs e)
         {
             if (sel_pool < 0 || addressRichTextBox.Text == "") return;
-            parent_dll.pools[sel_pool] = addressRichTextBox.Text;
+            plugin.pools[sel_pool] = addressRichTextBox.Text;
             
             reloadPoolsList();
         }
@@ -101,14 +101,14 @@ namespace smartcash
         private void addButton_Click(object sender, EventArgs e)
         {
             if (addressRichTextBox.Text == "") return;
-            parent_dll.pools.Add(addressRichTextBox.Text);
+            plugin.pools.Add(addressRichTextBox.Text);
             
             reloadPoolsList();
         }
         private void button1_Click(object sender, EventArgs e)
         {
             if (sel_pool < 0) return;
-            parent_dll.pools.RemoveAt(sel_pool);
+            plugin.pools.RemoveAt(sel_pool);
 
             reloadPoolsList();
         }
@@ -118,7 +118,7 @@ namespace smartcash
             sel_pool = -1;
 
             poolsListView.Items.Clear();
-            foreach (var it in parent_dll.pools)
+            foreach (var it in plugin.pools)
                 poolsListView.Items.Add(it);
 
             deleteButton.Visible = false;
