@@ -22,9 +22,10 @@ namespace mminer
 
         private void miners_Load(object sender, EventArgs e)
         {
-            foreach (string it in dlls.get_miners())
+            foreach (var it in dlls.get_miners())
             {
-                ListViewItem item = new ListViewItem(it);
+                ListViewItem item = new ListViewItem(it.Key);
+                item.SubItems.Add(it.Value);
                 listView1.Items.Add(item);
             }
         }
@@ -54,7 +55,7 @@ namespace mminer
             if (listView1.Items.Count == 0) return;
             #endregion
 
-            string id = listView1.Items[curr_item].Text;
+            string id = listView1.Items[curr_item].SubItems[1].Text;
 
             System.Reflection.Assembly DLL = null;
             string p = Application.StartupPath + dlls.PATH_MINERS + id + ".dll";

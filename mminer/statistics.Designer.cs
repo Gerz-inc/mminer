@@ -59,7 +59,7 @@
             this.Controls.Add(this.listView1);
             this.Name = "statistics";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Statistics";
+            this.Text = "Coin statistics";
             this.Load += new System.EventHandler(this.statistics_Load);
             this.ResumeLayout(false);
 

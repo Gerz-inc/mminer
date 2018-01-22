@@ -120,6 +120,18 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="sets.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="sets.Designer.cs">
+      <DependentUpon>sets.cs</DependentUpon>
+    </Compile>
+    <Compile Include="set_item.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="set_item.Designer.cs">
+      <DependentUpon>set_item.cs</DependentUpon>
+    </Compile>
     <Compile Include="statistics.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -154,6 +166,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="sets.resx">
+      <DependentUpon>sets.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="set_item.resx">
+      <DependentUpon>set_item.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="statistics.resx">
       <DependentUpon>statistics.cs</DependentUpon>
     </EmbeddedResource>
@@ -161,9 +179,6 @@
       <DependentUpon>wallets.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="data.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -178,6 +193,10 @@
     <ProjectReference Include="..\baseFunc\baseFunc.csproj">
       <Project>{94f0e925-56a6-4b42-9403-201b53ed0da5}</Project>
       <Name>baseFunc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EXLV\EXLV.csproj">
+      <Project>{be6b1fce-d822-4129-90e9-f4466f0a37e3}</Project>
+      <Name>EXLV</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "smartcash", "statistics\sma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ccminer", "miners\ccminer\ccminer.csproj", "{59D3963E-2AF1-4F14-BF79-48E776A385FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EXLV", "EXLV\EXLV.csproj", "{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|x86.ActiveCfg = Release|Any CPU
 		{59D3963E-2AF1-4F14-BF79-48E776A385FA}.Release|x86.Build.0 = Release|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Debug|x86.Build.0 = Debug|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|x86.ActiveCfg = Release|Any CPU
+		{BE6B1FCE-D822-4129-90E9-F4466F0A37E3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

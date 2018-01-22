@@ -70,7 +70,10 @@ namespace smartcash
         {
             var diff = plugin.GetDifficulty();
             if (diff.Key >= 0)
-                rateLabel.Text = String.Format("Difficulty {0:0.###} [{1:0.##}]", diff.Key, diff.Value);
+            {
+                string txt = String.Format("Difficulty {0:0.000} [{1:0.00}]", diff.Key, diff.Value);
+                rateLabel.Text = txt;
+            }
             else rateLabel.Text = "Something wrong";
         }
 

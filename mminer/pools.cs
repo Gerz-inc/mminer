@@ -103,7 +103,7 @@ namespace mminer
                 for (int i = 0; i < comboBox1.Items.Count; ++i)
                 {
                     base_func.ComboBoxItem it = (base_func.ComboBoxItem)comboBox1.Items[i];
-                    if (it.Value.ToString() == record["type"].ToString())
+                    if (it.Value.ToString() == record["id_connection_type"].ToString())
                     {
                         item.SubItems.Add(it.Text);
                         break;
@@ -222,7 +222,7 @@ namespace mminer
             base_func.ComboBoxItem t = (base_func.ComboBoxItem)comboBox1.Items[comboBox1.SelectedIndex];
             base_func.ComboBoxItem a = (base_func.ComboBoxItem)comboBox2.Items[comboBox2.SelectedIndex];
 
-            db.update_or_insert("update pools set type = " + t.Value.ToString() + ", url = '" + textBox1.Text + "', user = '" + textBox2.Text + "', pass = '" + textBox3.Text + "', id_algo = " + a.Value.ToString() + " where id = " + id_edit + "; ");
+            db.update_or_insert("update pools set id_connection_type = " + t.Value.ToString() + ", url = '" + textBox1.Text + "', user = '" + textBox2.Text + "', pass = '" + textBox3.Text + "', id_algo = " + a.Value.ToString() + " where id = " + id_edit + "; ");
 
             is_redact = false;
             refresh();
@@ -265,7 +265,7 @@ namespace mminer
                 base_func.ComboBoxItem t = (base_func.ComboBoxItem)comboBox1.Items[comboBox1.SelectedIndex];
                 base_func.ComboBoxItem a = (base_func.ComboBoxItem)comboBox2.Items[comboBox2.SelectedIndex];
 
-                db.update_or_insert("insert into pools (type, url, user, pass, id_algo) values (" + t.Value.ToString() + ", '" + textBox1.Text + "', '" + textBox2.Text + "', '" + textBox3.Text + "', " + a.Value.ToString() + "); ");
+                db.update_or_insert("insert into pools (id_connection_type, url, user, pass, id_algo) values (" + t.Value.ToString() + ", '" + textBox1.Text + "', '" + textBox2.Text + "', '" + textBox3.Text + "', " + a.Value.ToString() + "); ");
 
                 refresh();
                 clear_fields();

@@ -30,12 +30,14 @@
         {
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // listView1
             // 
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader9});
+            this.columnHeader9,
+            this.columnHeader1});
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.Location = new System.Drawing.Point(12, 12);
@@ -48,8 +50,13 @@
             // 
             // columnHeader9
             // 
-            this.columnHeader9.Text = "Finded miners";
+            this.columnHeader9.Text = "name";
             this.columnHeader9.Width = 400;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "folder";
+            this.columnHeader1.Width = 0;
             // 
             // miners
             // 
@@ -69,5 +76,6 @@
 
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader9;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
     }
 }
