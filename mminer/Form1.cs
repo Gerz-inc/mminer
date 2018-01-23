@@ -14,8 +14,11 @@ namespace mminer
 {
     public partial class Form1 : Form
     {
+        private Dictionary<int, work_item_struct> enabled_workers = new Dictionary<int, work_item_struct>(); 
+
         ref_bool is_running = new ref_bool(false);
         ref_bool is_miner_running = new ref_bool(false);
+        int current_id_running = 0;
 
         bool is_stat_thread_running = false;
         object lock_is_stat_thread_running = new object();
@@ -99,6 +102,7 @@ namespace mminer
         private void Form1_Load(object sender, EventArgs e)
         {
             dlls.load_ddls();
+            refresh_workers();
         }
 
         private void toolStripButton5_Click(object sender, EventArgs e)
@@ -126,36 +130,51 @@ namespace mminer
         private void run_miner()
         {
             var mm = dlls.get_miners();
+            var miner_settings = enabled_workers[current_id_running];
 
-            string id = mm.First().Value;
-            string exe = mm.First().Key;
-
-            System.Reflection.Assembly DLL = null;
-            string p = Application.StartupPath + dlls.PATH_MINERS + id + ".dll";
-            if (File.Exists(p))
+            if (mm.ContainsKey(miner_settings.miner))
             {
-                DLL = System.Reflection.Assembly.LoadFile(p);
-                if (DLL != null)
-                {
-                    Type t = DLL.GetType(id + ".Call");
-                    var m = t.GetMethod("run");
-                    if (m == null)
-                    {
-                        MessageBox.Show("Method run was not found in " + id + ".dll");
-                    }
-                    else
-                    {
-                        is_running.Value = true;
-                        is_miner_running.Value = true;
+                string id = mm[miner_settings.miner];
+                string exe = miner_settings.miner;
 
-                        var a = Activator.CreateInstance(t);
-                        var result = m.Invoke(a, new Object[] { exe, this, richTextBox1, is_miner_running });
+                System.Reflection.Assembly DLL = null;
+                string p = Application.StartupPath + dlls.PATH_MINERS + id + ".dll";
+                if (File.Exists(p))
+                {
+                    DLL = System.Reflection.Assembly.LoadFile(p);
+                    if (DLL != null)
+                    {
+                        Type t = DLL.GetType(id + ".Call");
+                        var m = t.GetMethod("run");
+                        if (m == null)
+                        {
+                            MessageBox.Show("Method run was not found in " + id + ".dll");
+                        }
+                        else
+                        {
+                            is_running.Value = true;
+                            is_miner_running.Value = true;
+
+                            string args = "-a " + miner_settings.algo_name_ccminer + " -o " + miner_settings.connection_type_name +
+                                          miner_settings.url + " -u " + miner_settings.wallet_name + " -p " + miner_settings.pass;
+
+                            var a = Activator.CreateInstance(t);
+                            var result = m.Invoke(a, new Object[] { exe, args, this, richTextBox1, is_miner_running, is_running });
+                        }
                     }
+                }
+                else
+                {
+                    MessageBox.Show("File " + p + " not found");
                 }
             }
             else
             {
-                MessageBox.Show("File " + p + " not found");
+                is_miner_running.Value = false;
+                is_running.Value = false;
+
+                richTextBox2.AppendText("\n[miner] ", Color.Red);
+                richTextBox2.AppendText("Miner not found: " + miner_settings.miner);
             }
         }
 
@@ -168,7 +187,15 @@ namespace mminer
 
         private void toolStripButton7_Click(object sender, EventArgs e)
         {
+            if (is_running.Value || is_miner_running.Value)
+            {
+                MessageBox.Show("Stop mining before");
+                return;
+            }
+
             new sets().ShowDialog();
+
+            refresh_workers();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -232,14 +259,42 @@ namespace mminer
                                     var a = Activator.CreateInstance(t);
                                     KeyValuePair<double, double> result = (KeyValuePair<double, double>)m.Invoke(a, new Object[] { });
 
-                                    if (result.Key != -1) //ok key = absolute, value = relative
+                                    Invoke(new dell((bool i) =>
                                     {
-                                        MessageBox.Show("" + result.Key + " " + result.Value);
-                                    }
-                                    else //fail
-                                    {
+                                        foreach (Control c in panel1.Controls)
+                                        {
+                                            if (c is work_item)
+                                            {
+                                                work_item item = c as work_item;
+                                                if (item.get_coin_stat_name() == it.Key)
+                                                {
+                                                    item.set_diff(result.Key, result.Value);
+                                                }
+                                            }
+                                        }
 
-                                    }
+                                        foreach (var c in enabled_workers)
+                                        {
+                                            if (c.Value.statistic == it.Key)
+                                            {
+                                                if (result.Key != -1)
+                                                {
+                                                    c.Value.coin_stat_diff = result.Value;
+                                                    c.Value.abs_diff = result.Key;
+                                                }
+                                                else
+                                                {
+                                                    c.Value.coin_stat_diff = -1;
+                                                    c.Value.abs_diff = -1;
+                                                }
+                                            }
+                                        }
+
+                                        sort_workers();
+
+                                    }), new Object[] { false });
+
+                                    
                                 }
                             }
                         }
@@ -251,6 +306,112 @@ namespace mminer
                     }
                 }));
             }
+        }
+
+        private void refresh_workers()
+        {
+            enabled_workers.Clear();
+            db.select(qry, new db_sqlite.dell((System.Data.Common.DbDataRecord record) =>
+            {
+                work_item_struct item = new work_item_struct();
+
+                item.id = base_func.ParseInt32(record["id"]);
+                item.statistic = record["statistic"].ToString();
+                item.miner = record["miner"].ToString();
+                item.manual_diff = base_func.ParseDouble(record["manual_diff"]);
+                item.pool_name = record["pool_name"].ToString();
+                item.url = record["url"].ToString();
+                item.pass = record["pass"].ToString();
+                item.connection_type_name = record["connection_type_name"].ToString();
+                item.algo_name = record["algo_name"].ToString();
+                item.algo_name_ccminer = record["algo_name_ccminer"].ToString();
+                item.wallet_name = record["wallet_name"].ToString();
+                item.coin = record["coin"].ToString();
+                item.exchange_name = record["exchange_name"].ToString();
+
+                enabled_workers.Add(item.id, item);
+
+                return true;
+            }));
+
+            sort_workers();
+        }
+
+        private void sort_workers()
+        {
+            var lnq = from it in enabled_workers
+                      orderby it.Value.get_diff()
+                      select it;
+
+            panel1.Controls.Clear();
+
+            bool first = true;
+            bool change_coin = false;
+            foreach (var it in lnq)
+            {
+                if (first)
+                {
+                    if (it.Key != current_id_running)
+                    {
+                        change_coin = true;
+                        current_id_running = it.Key;
+                    }
+                }
+
+                work_item item = new work_item();
+                item.init(it.Value, first);
+                item.Left = 3;
+                item.Top = (panel1.Controls.Count * (item.Height + 3)) + 3;
+                panel1.Controls.Add(item);
+
+                first = false;
+            }
+
+            if (change_coin)
+            {
+                richTextBox2.AppendText("\n[strategy] ", Color.Green);
+                richTextBox2.AppendText("Changing coin");
+                is_miner_running.Value = false;
+            }
+        }
+    }
+
+    public class work_item_struct
+    {
+        public enum coin_stat_state
+        {
+            stat_ok,
+            stat_error,
+            manual
+        };
+
+        public int id;
+        public string statistic;
+        public string miner;
+        public double manual_diff;
+        public double abs_diff;
+        public string pool_name;
+        public string url;
+        public string pass;
+        public string connection_type_name;
+        public string algo_name;
+        public string algo_name_ccminer;
+        public string wallet_name;
+        public string coin;
+        public string exchange_name;
+        public double coin_stat_diff = -1;
+
+        public double get_diff()
+        {
+            if (coin_stat_diff != -1) return coin_stat_diff;
+            return manual_diff;
+        }
+
+        public coin_stat_state get_coin_stat_state()
+        {
+            if (statistic == "" || statistic == "Manual") return coin_stat_state.manual;
+            if (coin_stat_diff != -1) return coin_stat_state.stat_ok;
+            return coin_stat_state.stat_error;
         }
     }
 

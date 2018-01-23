@@ -144,6 +144,12 @@
     <Compile Include="wallets.Designer.cs">
       <DependentUpon>wallets.cs</DependentUpon>
     </Compile>
+    <Compile Include="work_item.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="work_item.Designer.cs">
+      <DependentUpon>work_item.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="exchanges.resx">
       <DependentUpon>exchanges.cs</DependentUpon>
     </EmbeddedResource>
@@ -178,6 +184,9 @@
     <EmbeddedResource Include="wallets.resx">
       <DependentUpon>wallets.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="work_item.resx">
+      <DependentUpon>work_item.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -211,6 +220,66 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bblue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bluegreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\brown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\home_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\instr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\L1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lt_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lt_green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\off_.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\orange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\purple.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\time.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\coin.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

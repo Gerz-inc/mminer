@@ -42,6 +42,7 @@
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.panel1 = new System.Windows.Forms.Panel();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,7 +58,7 @@
             this.toolStripButton7});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(804, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(861, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -90,7 +91,7 @@
             // 
             // toolStripButton4
             // 
-            this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
+            this.toolStripButton4.Image = global::mminer.Properties.Resources.coin;
             this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton4.Name = "toolStripButton4";
             this.toolStripButton4.Size = new System.Drawing.Size(100, 22);
@@ -129,7 +130,7 @@
             this.richTextBox1.BackColor = System.Drawing.Color.Black;
             this.richTextBox1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.richTextBox1.ForeColor = System.Drawing.Color.LightGray;
-            this.richTextBox1.Location = new System.Drawing.Point(211, 194);
+            this.richTextBox1.Location = new System.Drawing.Point(271, 182);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(581, 317);
             this.richTextBox1.TabIndex = 1;
@@ -141,7 +142,7 @@
             this.richTextBox2.BackColor = System.Drawing.Color.Black;
             this.richTextBox2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.richTextBox2.ForeColor = System.Drawing.Color.LightGray;
-            this.richTextBox2.Location = new System.Drawing.Point(211, 28);
+            this.richTextBox2.Location = new System.Drawing.Point(271, 28);
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.Size = new System.Drawing.Size(581, 148);
             this.richTextBox2.TabIndex = 2;
@@ -157,14 +158,24 @@
             // timer2
             // 
             this.timer2.Enabled = true;
-            this.timer2.Interval = 6000;
+            this.timer2.Interval = 60000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.BackColor = System.Drawing.Color.White;
+            this.panel1.Location = new System.Drawing.Point(12, 28);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(253, 471);
+            this.panel1.TabIndex = 3;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(804, 523);
+            this.ClientSize = new System.Drawing.Size(861, 510);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.toolStrip1);
@@ -193,6 +204,7 @@
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 
