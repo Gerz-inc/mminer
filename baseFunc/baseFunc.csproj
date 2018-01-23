@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="baseFunc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ref_bool.cs" />
     <Compile Include="version.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

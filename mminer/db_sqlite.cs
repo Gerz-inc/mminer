@@ -33,7 +33,7 @@ namespace mminer
                     {
                         if (!del(record)) break;
                     }
-                    catch(Exception ex) { MessageBox.Show("Error in db_sqlite: " + ex.Message); }
+                    catch(Exception ex) { MessageBox.Show("Error in db_sqlite: " + ex.Message + "\n" + ex.StackTrace); }
                 }
             }
             catch(Exception ex) { ok = false; }

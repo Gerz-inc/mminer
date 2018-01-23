@@ -110,7 +110,7 @@ namespace mminer
                 base_func.ComboBoxItem t = (base_func.ComboBoxItem)comboBox1.Items[comboBox1.SelectedIndex];
                 base_func.ComboBoxItem c = (base_func.ComboBoxItem)comboBox2.Items[comboBox2.SelectedIndex];
 
-                db.update_or_insert("insert into wallets (coin, name, id_exchange) values ('" + t.Value.ToString() + "', '" + textBox1.Text + "', " + t.Value.ToString() + "); ");
+                db.update_or_insert("insert into wallets (coin, name, id_exchange) values ('" + c.Value.ToString() + "', '" + textBox1.Text + "', " + t.Value.ToString() + "); ");
 
                 refresh();
                 clear_fields();
@@ -170,7 +170,7 @@ namespace mminer
                 }
                 else
                 {
-                    item.SubItems.Add("");
+                    item.SubItems.Add("-");
                 }
 
                 item.SubItems.Add(record["coin"].ToString());

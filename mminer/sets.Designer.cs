@@ -37,10 +37,11 @@
             // 
             // panel1
             // 
+            this.panel1.AutoScroll = true;
             this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Location = new System.Drawing.Point(12, 28);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(611, 460);
+            this.panel1.Size = new System.Drawing.Size(755, 460);
             this.panel1.TabIndex = 0;
             // 
             // toolStrip1
@@ -49,7 +50,7 @@
             this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(635, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(779, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -66,7 +67,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(635, 500);
+            this.ClientSize = new System.Drawing.Size(779, 500);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.panel1);
             this.Name = "sets";
