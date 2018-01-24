@@ -18,10 +18,13 @@ namespace mminer
 
         ref_bool is_running = new ref_bool(false);
         ref_bool is_miner_running = new ref_bool(false);
+        string_pipe pipe = new string_pipe();
         int current_id_running = 0;
+        bool autostart_flag = false;
 
         bool is_stat_thread_running = false;
         object lock_is_stat_thread_running = new object();
+        DateTime curr_date = DateTime.Now;
 
         db_sqlite db = new db_sqlite();
 
@@ -81,7 +84,15 @@ namespace mminer
         /// <param name="e"></param>
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            if (is_running.Value || is_miner_running.Value)
+            {
+                MessageBox.Show("Stop mining before");
+                return;
+            }
+
             new pools().ShowDialog();
+
+            refresh_workers(false);
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -102,7 +113,7 @@ namespace mminer
         private void Form1_Load(object sender, EventArgs e)
         {
             dlls.load_ddls();
-            refresh_workers();
+            refresh_workers(false);
         }
 
         private void toolStripButton5_Click(object sender, EventArgs e)
@@ -115,6 +126,8 @@ namespace mminer
             if (is_running.Value && is_miner_running.Value)
             {
                 is_running.Value = false;
+                richTextBox2.AppendText("\n[miner] ", Color.Yellow);
+                richTextBox2.AppendText("Waiting for the miner to be stopped");
             }
             else if (!is_running.Value && is_miner_running.Value)
             {
@@ -159,7 +172,7 @@ namespace mminer
                                           miner_settings.url + " -u " + miner_settings.wallet_name + " -p " + miner_settings.pass;
 
                             var a = Activator.CreateInstance(t);
-                            var result = m.Invoke(a, new Object[] { exe, args, this, richTextBox1, is_miner_running, is_running });
+                            var result = m.Invoke(a, new Object[] { exe, args, current_id_running, this, richTextBox1, is_miner_running, is_running, pipe });
                         }
                     }
                 }
@@ -195,7 +208,7 @@ namespace mminer
 
             new sets().ShowDialog();
 
-            refresh_workers();
+            refresh_workers(false);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -261,18 +274,6 @@ namespace mminer
 
                                     Invoke(new dell((bool i) =>
                                     {
-                                        foreach (Control c in panel1.Controls)
-                                        {
-                                            if (c is work_item)
-                                            {
-                                                work_item item = c as work_item;
-                                                if (item.get_coin_stat_name() == it.Key)
-                                                {
-                                                    item.set_diff(result.Key, result.Value);
-                                                }
-                                            }
-                                        }
-
                                         foreach (var c in enabled_workers)
                                         {
                                             if (c.Value.statistic == it.Key)
@@ -290,6 +291,7 @@ namespace mminer
                                             }
                                         }
 
+                                        refresh_workers_display();
                                         sort_workers();
 
                                     }), new Object[] { false });
@@ -308,7 +310,7 @@ namespace mminer
             }
         }
 
-        private void refresh_workers()
+        private void refresh_workers(bool allow_change_coin = true)
         {
             enabled_workers.Clear();
             db.select(qry, new db_sqlite.dell((System.Data.Common.DbDataRecord record) =>
@@ -334,32 +336,36 @@ namespace mminer
                 return true;
             }));
 
-            sort_workers();
+            sort_workers(allow_change_coin);
         }
 
-        private void sort_workers()
+        private void sort_workers(bool allow_change_coin = true)
         {
             var lnq = from it in enabled_workers
-                      orderby it.Value.get_diff()
+                      orderby it.Value.cant_run, it.Value.get_diff()
                       select it;
 
             panel1.Controls.Clear();
 
             bool first = true;
             bool change_coin = false;
-            foreach (var it in lnq)
+            foreach (var itt in lnq)
             {
+                work_item_struct it = enabled_workers[itt.Key];
+
+                it.is_running = first;
+
                 if (first)
                 {
-                    if (it.Key != current_id_running)
+                    if (it.id != current_id_running)
                     {
                         change_coin = true;
-                        current_id_running = it.Key;
+                        current_id_running = it.id;
                     }
                 }
 
                 work_item item = new work_item();
-                item.init(it.Value, first);
+                item.init(ref it);
                 item.Left = 3;
                 item.Top = (panel1.Controls.Count * (item.Height + 3)) + 3;
                 panel1.Controls.Add(item);
@@ -367,11 +373,102 @@ namespace mminer
                 first = false;
             }
 
-            if (change_coin)
+            if (change_coin && allow_change_coin)
             {
+                refresh_workers_display();
+
                 richTextBox2.AppendText("\n[strategy] ", Color.Green);
                 richTextBox2.AppendText("Changing coin");
-                is_miner_running.Value = false;
+                is_running.Value = false;
+                autostart_flag = true;
+            }
+        }
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            if (autostart_flag)
+            {
+                if (!is_running.Value && !is_miner_running.Value)
+                {
+                    autostart_flag = false;
+                    run_miner();
+                }
+            }
+
+            //read pipe
+            string msg = pipe.pull_message();
+            if (msg != "")
+            {
+                richTextBox2.AppendText("\n[pipe] ", Color.BurlyWood);
+                richTextBox2.AppendText(msg);
+
+                string[] exp = baseFunc.base_func.explode("|", msg);
+                if (exp.Length >= 2)
+                {
+                    int id_run = base_func.ParseInt32(exp[0]);
+                    string what = exp[1];
+
+                    if (what == "not_supported")
+                    {
+                        if (enabled_workers.ContainsKey(id_run))
+                        {
+                            enabled_workers[id_run].cant_run = true;
+                            refresh_workers_display();
+                            sort_workers();
+                        }
+                    }
+                }
+            }
+
+            //date time
+            DateTime dt = DateTime.Now;
+            if (curr_date.Date != dt.Date)
+            {
+                curr_date = dt;
+                refresh_workers_display();
+            }
+        }
+
+        private void refresh_workers_display()
+        {
+            foreach (Control c in panel1.Controls)
+            {
+                if (c is work_item)
+                {
+                    work_item item = c as work_item;
+                    item.refresh();
+                }
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            is_running.Value = false;
+            richTextBox2.AppendText("\n[main] ", Color.Green);
+            richTextBox2.AppendText("Wait for exit");
+            while (is_miner_running.Value)
+            {
+                Thread.Sleep(100);
+                Application.DoEvents();
+            }
+        }
+
+        private void timer4_Tick(object sender, EventArgs e)
+        {
+            if (is_running.Value && is_miner_running.Value) //times
+            {
+                db.update_or_insert("insert into times (id_pool, dat) values (" + current_id_running + ", CURRENT_TIMESTAMP); ");
+                foreach (Control c in panel1.Controls)
+                {
+                    if (c is work_item)
+                    {
+                        work_item item = c as work_item;
+                        if (item.get_id() == current_id_running)
+                        {
+                            item.refresh();
+                        }
+                    }
+                }
             }
         }
     }
@@ -400,6 +497,9 @@ namespace mminer
         public string coin;
         public string exchange_name;
         public double coin_stat_diff = -1;
+        public DateTime stopped_before = DateTime.MinValue;
+        public bool cant_run = false;
+        public bool is_running = false;
 
         public double get_diff()
         {

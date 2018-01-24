@@ -281,6 +281,9 @@
   <ItemGroup>
     <None Include="Resources\coin.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\warn.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(SolutionDir)mminer\$(OutDir)data.db" "$(ProjectDir)"</PreBuildEvent>
