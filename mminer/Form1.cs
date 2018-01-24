@@ -314,6 +314,7 @@ namespace mminer
 
         private void refresh_workers(bool allow_change_coin = true)
         {
+            return;
             enabled_workers.Clear();
             db.select(qry, new db_sqlite.dell((System.Data.Common.DbDataRecord record) =>
             {

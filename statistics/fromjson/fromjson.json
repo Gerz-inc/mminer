@@ -1,0 +1,11 @@
+{
+	"coins": [
+    {
+      "name": "spark",
+      "diff_min": 100.8,
+      "diff_max": 400,
+      "url": "https://whattomine.com/coins.json",
+      "diff_path": "coins.Ethereum.difficulty"
+    }
+	]
+}

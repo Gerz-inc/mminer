@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EXLV", "EXLV\EXLV.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zcash", "statistics\zcash\zcash.csproj", "{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fromjson", "statistics\fromjson\fromjson.csproj", "{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,18 @@ Global
 		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|x86.ActiveCfg = Release|Any CPU
 		{F6FBFD0F-1960-4369-ABBC-D34022A8C8AE}.Release|x86.Build.0 = Release|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Debug|x86.Build.0 = Debug|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Release|Any CPU.Build.0 = Release|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Release|x86.ActiveCfg = Release|Any CPU
+		{428BDD82-79DD-4E7A-8C8C-CB0D0FCC5404}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
