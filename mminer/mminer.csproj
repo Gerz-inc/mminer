@@ -289,8 +289,8 @@
     <PreBuildEvent>copy "$(SolutionDir)mminer\$(OutDir)data.db" "$(ProjectDir)"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)miners\ccminers\*" "$(TargetDir)miners\ccminers"  /s /i
+xcopy "$(SolutionDir)coins\*" "$(TargetDir)coins"  /s /i /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

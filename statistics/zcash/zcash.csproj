@@ -36,7 +36,7 @@
       <HintPath>..\..\baseFunc\bin\Debug\baseFunc.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\mminer\bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\resources\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
