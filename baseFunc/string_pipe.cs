@@ -32,5 +32,13 @@ namespace baseFunc
             }
             return ret;
         }
+
+        public void clear()
+        {
+            lock (l)
+            {
+                messages.Clear();
+            }
+        }
     }
 }

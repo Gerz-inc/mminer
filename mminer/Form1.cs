@@ -21,6 +21,7 @@ namespace mminer
         string_pipe pipe = new string_pipe();
         int current_id_running = 0;
         bool autostart_flag = false;
+        List<int> currnet_sort = new List<int>();
 
         bool is_stat_thread_running = false;
         object lock_is_stat_thread_running = new object();
@@ -165,6 +166,7 @@ namespace mminer
                         }
                         else
                         {
+                            pipe.clear();
                             is_running.Value = true;
                             is_miner_running.Value = true;
 
@@ -341,46 +343,68 @@ namespace mminer
 
         private void sort_workers(bool allow_change_coin = true)
         {
-            var lnq = from it in enabled_workers
-                      orderby it.Value.cant_run, it.Value.get_diff()
-                      select it;
-
-            panel1.Controls.Clear();
-
-            bool first = true;
-            bool change_coin = false;
-            foreach (var itt in lnq)
+            //unfreeze
+            DateTime dt_now = DateTime.Now;
+            foreach (var itt in enabled_workers)
             {
-                work_item_struct it = enabled_workers[itt.Key];
-
-                it.is_running = first;
-
-                if (first)
+                if (itt.Value.stopped_before != DateTime.MinValue)
                 {
-                    if (it.id != current_id_running)
-                    {
-                        change_coin = true;
-                        current_id_running = it.id;
-                    }
+                    if (itt.Value.stopped_before < dt_now) itt.Value.stopped_before = DateTime.MinValue;
                 }
-
-                work_item item = new work_item();
-                item.init(ref it);
-                item.Left = 3;
-                item.Top = (panel1.Controls.Count * (item.Height + 3)) + 3;
-                panel1.Controls.Add(item);
-
-                first = false;
             }
 
-            if (change_coin && allow_change_coin)
-            {
-                refresh_workers_display();
+            var lnq = from it in enabled_workers
+                      orderby it.Value.cant_run, it.Value.stopped_before, it.Value.get_diff()
+                      select it;
 
-                richTextBox2.AppendText("\n[strategy] ", Color.Green);
-                richTextBox2.AppendText("Changing coin");
-                is_running.Value = false;
-                autostart_flag = true;
+            List<int> s = new List<int>();
+            foreach (var itt in lnq)
+            {
+                s.Add(itt.Key);
+            }
+
+            if (!s.SequenceEqual(currnet_sort))
+            {
+                bool change_coin = false;
+
+                currnet_sort = s;
+                panel1.Controls.Clear();
+                for (int i = 0; i < currnet_sort.Count; ++i)
+                {
+                    int id = currnet_sort[i];
+
+                    work_item_struct it = enabled_workers[id];
+
+                    if (i == 0)
+                    {
+                        it.is_running = true;
+                        if (it.id != current_id_running)
+                        {
+                            change_coin = true;
+                            current_id_running = it.id;
+                        }
+                    }
+                    else
+                    {
+                        it.is_running = false;
+                    }
+
+                    work_item item = new work_item();
+                    item.init(ref it);
+                    item.Left = 3;
+                    item.Top = (panel1.Controls.Count * (item.Height + 3)) + 3;
+                    panel1.Controls.Add(item);
+                }
+
+                if (change_coin && allow_change_coin)
+                {
+                    refresh_workers_display();
+
+                    richTextBox2.AppendText("\n[strategy] ", Color.Green);
+                    richTextBox2.AppendText("Changing coin");
+                    is_running.Value = false;
+                    autostart_flag = true;
+                }
             }
         }
 
@@ -399,22 +423,64 @@ namespace mminer
             string msg = pipe.pull_message();
             if (msg != "")
             {
-                richTextBox2.AppendText("\n[pipe] ", Color.BurlyWood);
-                richTextBox2.AppendText(msg);
-
                 string[] exp = baseFunc.base_func.explode("|", msg);
                 if (exp.Length >= 2)
                 {
                     int id_run = base_func.ParseInt32(exp[0]);
                     string what = exp[1];
 
-                    if (what == "not_supported")
+                    richTextBox2.AppendText("\n[pipe] ", Color.BurlyWood);
+                    richTextBox2.AppendText(what);
+
+                    /*if (line.Contains("is not supported")) pipe.write("" + current_id_running.ToString() + "|not_supported");
+                    else if (line.Contains("connection interrupted")) pipe.write("" + current_id_running.ToString() + "|connection interrupted");
+                    else if (line.Contains("Failed to connect")) pipe.write("" + current_id_running.ToString() + "|Failed to connect");
+                    else if (line.Contains("waiting for data")) pipe.write("" + current_id_running.ToString() + "|waiting for data");
+                    else if (line.Contains("Could not resolve host")) pipe.write("" + current_id_running.ToString() + "|Could not resolve host");*/
+
+                    if (enabled_workers.ContainsKey(id_run))
                     {
-                        if (enabled_workers.ContainsKey(id_run))
+                        work_item_struct worker = enabled_workers[id_run];
+
+                        if (what == "not_supported")
                         {
-                            enabled_workers[id_run].cant_run = true;
+                            worker.stopped_msg = what;
+                            worker.cant_run = true;
                             refresh_workers_display();
-                            sort_workers();
+                        }
+                        else if (what == "connection interrupted" || what == "Failed to connect")
+                        {
+                            int cnt = worker.get_count_pipe_msg(what);
+                            if (cnt > 5)
+                            {
+                                worker.stopped_msg = what;
+                                worker.stopped_before = DateTime.Now.AddMinutes(30);
+                                refresh_workers_display();
+                            }
+                            else
+                            {
+                                worker.add_pipe_msg(what);
+                            }
+                        }
+                        else if (what == "Could not resolve host")
+                        {
+                            worker.stopped_msg = what;
+                            worker.stopped_before = DateTime.Now.AddMinutes(30);
+                            refresh_workers_display();
+                        }
+                        else if (what == "waiting for data")
+                        {
+                            int cnt = worker.get_count_pipe_msg(what);
+                            if (cnt > 30)
+                            {
+                                worker.stopped_msg = what;
+                                worker.stopped_before = DateTime.Now.AddMinutes(30);
+                                refresh_workers_display();
+                            }
+                            else
+                            {
+                                worker.add_pipe_msg(what);
+                            }
                         }
                     }
                 }
@@ -427,6 +493,8 @@ namespace mminer
                 curr_date = dt;
                 refresh_workers_display();
             }
+
+            sort_workers();
         }
 
         private void refresh_workers_display()
@@ -475,6 +543,38 @@ namespace mminer
 
     public class work_item_struct
     {
+        public class pipe_msg
+        {
+            private List<DateTime> action_times = new List<DateTime>();
+
+            public void add()
+            {
+                action_times.Add(DateTime.Now);
+            }
+
+            public int get_count_pipe_msg()
+            {
+                DateTime dt_now = DateTime.Now.AddMinutes(-30);
+
+                bool done = false;
+                while (!done)
+                {
+                    done = true;
+                    for (int i = 0; i < action_times.Count; ++i)
+                    {
+                        if (action_times[i] < dt_now)
+                        {
+                            action_times.RemoveAt(i);
+                            done = false;
+                            break;
+                        }
+                    }
+                }
+
+                return action_times.Count;
+            }
+        }
+
         public enum coin_stat_state
         {
             stat_ok,
@@ -498,8 +598,31 @@ namespace mminer
         public string exchange_name;
         public double coin_stat_diff = -1;
         public DateTime stopped_before = DateTime.MinValue;
+        public string stopped_msg = "";
         public bool cant_run = false;
         public bool is_running = false;
+
+        private Dictionary<string, pipe_msg> pipe_msgs = new Dictionary<string, pipe_msg>();
+
+        public int get_count_pipe_msg(string msg)
+        {
+            if (pipe_msgs.ContainsKey(msg))
+            {
+                return pipe_msgs[msg].get_count_pipe_msg();
+            }
+            return 0;
+        }
+
+        public void clear_all_pipe_msg()
+        {
+            pipe_msgs.Clear();
+        }
+
+        public void add_pipe_msg(string msg)
+        {
+            if (!pipe_msgs.ContainsKey(msg)) pipe_msgs.Add(msg, new pipe_msg());
+            pipe_msgs[msg].add();
+        }
 
         public double get_diff()
         {
