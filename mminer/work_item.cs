@@ -58,8 +58,6 @@ namespace mminer
             if (diff_rel.Length > 3) diff_rel = diff_rel.Substring(0, 3);
             label9.Text = diff_rel;
 
-            if (data.cant_run) pictureBox2.Image = Properties.Resources.warn;
-
             DateTime curr_date = DateTime.Now;
 
             db.select("select count(*) from times where id_pool = " + data.id + " and dat >='" + curr_date.ToString("yyyy-MM-dd") + " 00:00:00' and dat < '" + curr_date.AddDays(1).ToString("yyyy-MM-dd") + " 00:00:00'; ", new db_sqlite.dell((System.Data.Common.DbDataRecord record) => 
@@ -78,7 +76,28 @@ namespace mminer
                 label11.Text = h_str + ":" + min_str + " (" + perc + "%)";
                 return true;
             }));
+
+            if (data.cant_run)
+            {
+                pictureBox2.Image = Properties.Resources.warn;
+            }
+            else if (data.stopped_before != DateTime.MinValue)
+            {
+                pictureBox2.Image = Properties.Resources.warn;
+            }
         }
 
+        private void pictureBox2_MouseHover(object sender, EventArgs e)
+        {
+            if (data.cant_run)
+            {
+                toolTip1.SetToolTip(pictureBox2, "Miner not supported on your system");
+            }
+            else if (data.stopped_before != DateTime.MinValue)
+            {
+                pictureBox2.Image = Properties.Resources.warn;
+                toolTip1.SetToolTip(pictureBox2, "Miner stopped before " + data.stopped_before.ToString("yyyy-MM-dd HH:mm:ss") + ". Reason: " + data.stopped_msg);
+            }
+        }
     }
 }
