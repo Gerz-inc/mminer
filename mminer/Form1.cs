@@ -528,6 +528,10 @@ namespace mminer
             if (curr_date.Date != dt.Date)
             {
                 curr_date = dt;
+
+                //clear
+                db.update_or_insert("delete from times where dat < '" + curr_date.ToString("yyyy-MM-dd") + " 00:00:00'; ");
+
                 refresh_workers_display();
             }
 
