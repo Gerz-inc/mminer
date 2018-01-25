@@ -25,6 +25,7 @@ namespace fromjson
             public DateTime req_date;
             public DateTime res_date;
             public JObject response;
+            public string response_raw;
         }
         
         public List<CoinSettings> coins = new List<CoinSettings>();
@@ -120,7 +121,8 @@ namespace fromjson
             coin.req_date = DateTime.Now;
 
             bool sts = false;
-            if (baseFunc.Json.Request(coin.url, out coin.response, false, req_timeout) == true)
+            bool? req_str = baseFunc.Json.Request(coin.url, out coin.response, out coin.response_raw, false, req_timeout);
+            if (req_str == true || coin.response_raw.Length > 0)
             {
                 coin.res_date = DateTime.Now;
                 sts = true;
@@ -137,10 +139,13 @@ namespace fromjson
                 {
                     int rate_max = 5,
                         rate_min = 0;
-                    
-                    double diff = coin.response.SelectToken(coin.diff_path).Value<double>();
-                    while (diff > 1000) diff /= 1000; // to xxx.xx
 
+                    double diff = 0;
+                    if (coin.response != null) coin.response.SelectToken(coin.diff_path).Value<double>();
+                    else if (!Double.TryParse(coin.response_raw.Replace(".", ","), out diff))
+                        return new KeyValuePair<double, double>(-1, 0);
+
+                    while (diff > 1000) diff /= 1000; // to xxx.xx
                     double rate = (rate_max - rate_min) / (coin.diff_max - coin.diff_min) * (diff - coin.diff_min);
                     rate = rate > rate_max ? rate_max : (rate < rate_min ? rate_min : rate);
                     return new KeyValuePair<double, double>(diff, rate);

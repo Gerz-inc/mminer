@@ -102,7 +102,8 @@ namespace smartcash
                 first = false;
                 req_date = new DateTime();
                 string query = pools[pool];
-                if (baseFunc.Json.Request(query, out response, false, req_timeout) == true)
+                string json_str;
+                if (baseFunc.Json.Request(query, out response, out json_str, false, req_timeout) == true)
                 {
                     res_date = new DateTime();
                     pool_i = pool;

@@ -1196,9 +1196,10 @@ namespace baseFunc
     public class Json
     {
         // Запрос
-        public static bool? Request(string query, out JObject response, bool escaped = false, int timeout = 10000)
+        public static bool? Request(string query, out JObject response, out string json_str, bool escaped = false, int timeout = 10000)
         {
             response = new JObject();
+            json_str = "";
 
             try
             {
@@ -1213,7 +1214,7 @@ namespace baseFunc
                 WebResponse resp = req.GetResponse();
                 Stream stream = resp.GetResponseStream();
                 StreamReader sr = new StreamReader(stream);
-                string json_str = sr.ReadToEnd();
+                json_str = sr.ReadToEnd();
 
                 // Maybe jsonp
                 Regex r = new Regex("^[^(]+\\((.+)\\)$", RegexOptions.IgnoreCase);
@@ -1229,6 +1230,8 @@ namespace baseFunc
             {
                 Console.WriteLine("Request error: " + query + "\n" + ex.Message);
                 //Trace.WriteLine("Request error: " + query + "\n" + ex.Message);
+
+                response = null;
                 return null;
             }
         }
