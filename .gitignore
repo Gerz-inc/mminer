@@ -10,7 +10,7 @@
 *.sln.docstates
 *.rar
 *.zip
-*.db
+data.db
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
