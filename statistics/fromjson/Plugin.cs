@@ -5,6 +5,7 @@ using baseFunc;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace fromjson
 {
@@ -35,8 +36,7 @@ namespace fromjson
             plugin_name = Assembly.GetExecutingAssembly().GetName().Name;
             json_file_name = Path.Combine(assemblyFolder, plugin_name + ".json");
 
-            if (ReadSettings())
-                GetDataIfNeeded();
+            ReadSettings();
         }
 
         #region Settings
@@ -107,57 +107,65 @@ namespace fromjson
         
         #region API
 
-        private bool GetDataIfNeeded()
+        private bool GetCoinDataIfNeeded(ref CoinSettings coin)
         {
-            /*if ((DateTime.Now - res_date).TotalSeconds < 60)
+            if ((DateTime.Now - coin.res_date).TotalSeconds < 60)
                 return true;
 
-            return GetData(out work_pool);*/
-            return true;
+            return GetCoinData(ref coin);
         }
 
-        private bool GetData(out int pool_i)
+        private bool GetCoinData(ref CoinSettings coin)
         {
-            /*int pool = work_pool;
-            if (pool > pools.Count || pool == -1) pool = 0;
-            if (pool == pools.Count) pool = -1;
-            int prev_pool = pool;
-            bool first = true;
+            coin.req_date = DateTime.Now;
 
-            while ((first || prev_pool != pool) && pool >= 0)
+            bool sts = false;
+            if (baseFunc.Json.Request(coin.url, out coin.response, false, req_timeout) == true)
             {
-                first = false;
-                req_date = new DateTime();
-                string query = pools[pool];
-                if (baseFunc.Json.Request(query, out response, false, req_timeout) == true)
+                coin.res_date = DateTime.Now;
+                sts = true;
+            }
+
+            return sts;
+        }
+
+        public KeyValuePair<double, double> GetCoinDifficulty(ref CoinSettings coin)
+        {
+            if (GetCoinDataIfNeeded(ref coin))
+            {
+                try
                 {
-                    res_date = new DateTime();
-                    pool_i = pool;
-                    return true;
-                }
-                pool = pool < pools.Count - 1 ? ++pool : 0;
-            }*/
+                    int rate_max = 5,
+                        rate_min = 0;
+                    
+                    double diff = coin.response.SelectToken(coin.diff_path).Value<double>();
+                    while (diff > 1000) diff /= 1000; // to xxx.xx
 
-            pool_i = -1;
-            return false;
+                    double rate = (rate_max - rate_min) / (coin.diff_max - coin.diff_min) * (diff - coin.diff_min);
+                    rate = rate > rate_max ? rate_max : (rate < rate_min ? rate_min : rate);
+                    return new KeyValuePair<double, double>(diff, rate);
+                }
+                catch (Exception ex) { }
+            }
+            return new KeyValuePair<double, double>(-1, 0);
         }
 
-        public KeyValuePair<double, double> GetDifficulty(string coin)
+        public KeyValuePair<double, double> GetCoinDifficultyByName(string coin_name)
         {
-            /*if (GetDataIfNeeded())
+            // Select all url for this coin
+            for (int i = 0; i < this.coins.Count; ++i)
             {
-                int rate_max = 5,
-                    rate_min = 0;
+                CoinSettings coin = coins[i];
+                if (coin.name.ToLower() == coin_name.ToLower())
+                {
+                    var diff = GetCoinDifficulty(ref coin);
+                    this.coins[i] = coin; // save
 
-                double diff = response.SelectToken("getpoolstatus.data.networkdiff").Value<double>() / 1000;
-                double rate = (rate_max - rate_min) / (diff_max - diff_min) * (diff - diff_min);
-                rate = rate > rate_max ? rate_max : (rate < rate_min ? rate_min : rate);
-                return new KeyValuePair<double, double>(diff, rate);
+                    if (diff.Key >= 0)
+                        return diff;
+                }
             }
-            else*/
-            {
-                return new KeyValuePair<double, double>(-1, 0);
-            }
+            return new KeyValuePair<double, double>(-1, 0);
         }
 
         #endregion

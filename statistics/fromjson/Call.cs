@@ -21,9 +21,9 @@ namespace fromjson
             return "Statistic from JSON";
         }
 
-        public KeyValuePair<double, double> GetDifficulty(string coin)
+        public KeyValuePair<double, double> GetDifficultyByName(string coin)
         {
-            return plugin.GetDifficulty(coin);
+            return plugin.GetCoinDifficultyByName(coin);
         }
     }
 }

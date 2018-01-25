@@ -18,6 +18,7 @@ namespace fromjson
     {
         private Plugin plugin;
         private int sel_coin = -1;
+        private bool saved = true;
 
         public Main(Plugin plugin)
         {
@@ -52,6 +53,7 @@ namespace fromjson
             deleteButton.Visible = false;
             modifyButton.Visible = false;
             checkButton.Visible = false;
+            rateLabel.Text = "";
         }
         
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -71,6 +73,7 @@ namespace fromjson
             deleteButton.Visible = sel_coin >= 0;
             modifyButton.Visible = sel_coin >= 0;
             checkButton.Visible = sel_coin >= 0;
+            rateLabel.Text = "";
         }
 
         private CoinSettings coinFromFields()
@@ -108,18 +111,9 @@ namespace fromjson
         private void button3_Click(object sender, EventArgs e)
         {
             plugin.SaveSettings();
-            Close();
-        }
+            saved = true;
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var diff = plugin.GetDifficulty("smart");
-            if (diff.Key >= 0)
-            {
-                string txt = String.Format("Difficulty {0:0.000} [{1:0.00}]", diff.Key, diff.Value);
-                rateLabel.Text = txt;
-            }
-            else rateLabel.Text = "Something wrong";
+            Close();
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -134,6 +128,7 @@ namespace fromjson
             CoinSettings coin = coinFromFields();
             plugin.coins[sel_coin] = coin;
             reloadPoolsList();
+            saved = false;
         }
         
         private void addButton_Click(object sender, EventArgs e)
@@ -150,6 +145,33 @@ namespace fromjson
 
             plugin.coins.RemoveAt(sel_coin);
             reloadPoolsList();
+        }
+
+        private void checkButton_Click(object sender, EventArgs e)
+        {
+            if (sel_coin < 0) return;
+            CoinSettings coin = plugin.coins[sel_coin];
+            var diff = plugin.GetCoinDifficulty(ref coin);
+            if (diff.Key >= 0)
+            {
+                string txt = String.Format("Difficulty {0:0.000} [{1:0.00}]", diff.Key, diff.Value);
+                rateLabel.Text = txt;
+            }
+            else rateLabel.Text = "Something wrong";
+            plugin.coins[sel_coin] = coin;
+        }
+
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Button bt = (sender as Button);
+            if (bt == null || bt.Name != "closeButton")
+            {
+                if (!saved)
+                {
+                    if (MessageBox.Show(this, "Save changes?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        plugin.SaveSettings();
+                }
+            }
         }
     }
 }
