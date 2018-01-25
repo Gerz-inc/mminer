@@ -254,31 +254,37 @@ namespace mminer
                     db.select(qry, new db_sqlite.dell((System.Data.Common.DbDataRecord record) =>
                     {
                         string statistic = record["statistic"].ToString();
-                        if (!check.ContainsKey(statistic)) check.Add(statistic, false);
+                        string coin = record["coin"].ToString();
+                        string key = statistic + "|" + coin;
+                        if (!check.ContainsKey(key)) check.Add(key, false);
                         return true;
                     }));
 
                     foreach (var it in check)
                     {
+                        string[] exp = baseFunc.base_func.explode("|", it.Key);
+                        string dll = exp[0];
+                        string coin = exp[1];
+
                         System.Reflection.Assembly DLL = null;
-                        string p = Application.StartupPath + dlls.PATH_STATISTICS + it.Key + ".dll";
+                        string p = Application.StartupPath + dlls.PATH_STATISTICS + dll + ".dll";
                         if (File.Exists(p))
                         {
                             DLL = System.Reflection.Assembly.LoadFile(p);
                             if (DLL != null)
                             {
-                                Type t = DLL.GetType(it.Key + ".Call");
-                                var m = t.GetMethod("GetDifficulty");
+                                Type t = DLL.GetType(dll + ".Call");
+                                var m = t.GetMethod("GetDifficultyByName");
                                 if (m != null)
                                 {
                                     var a = Activator.CreateInstance(t);
-                                    KeyValuePair<double, double> result = (KeyValuePair<double, double>)m.Invoke(a, new Object[] { });
+                                    KeyValuePair<double, double> result = (KeyValuePair<double, double>)m.Invoke(a, new Object[] { coin });
 
                                     Invoke(new dell((bool i) =>
                                     {
                                         foreach (var c in enabled_workers)
                                         {
-                                            if (c.Value.statistic == it.Key)
+                                            if (c.Value.statistic == dll && c.Value.coin == coin)
                                             {
                                                 if (result.Key != -1)
                                                 {
@@ -297,8 +303,39 @@ namespace mminer
                                         sort_workers();
 
                                     }), new Object[] { false });
+                                }
+                                else
+                                {
+                                    m = t.GetMethod("GetDifficulty");
+                                    if (m != null)
+                                    {
+                                        var a = Activator.CreateInstance(t);
+                                        KeyValuePair<double, double> result = (KeyValuePair<double, double>)m.Invoke(a, new Object[] { });
 
-                                    
+                                        Invoke(new dell((bool i) =>
+                                        {
+                                            foreach (var c in enabled_workers)
+                                            {
+                                                if (c.Value.statistic == dll)
+                                                {
+                                                    if (result.Key != -1)
+                                                    {
+                                                        c.Value.coin_stat_diff = result.Value;
+                                                        c.Value.abs_diff = result.Key;
+                                                    }
+                                                    else
+                                                    {
+                                                        c.Value.coin_stat_diff = -1;
+                                                        c.Value.abs_diff = -1;
+                                                    }
+                                                }
+                                            }
+
+                                            refresh_workers_display();
+                                            sort_workers();
+
+                                        }), new Object[] { false });
+                                    }
                                 }
                             }
                         }
@@ -451,7 +488,7 @@ namespace mminer
                         else if (what == "connection interrupted" || what == "Failed to connect")
                         {
                             int cnt = worker.get_count_pipe_msg(what);
-                            if (cnt > 5)
+                            if (cnt >= 1)
                             {
                                 worker.stopped_msg = what;
                                 worker.stopped_before = DateTime.Now.AddMinutes(30);
