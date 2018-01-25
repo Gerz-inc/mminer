@@ -110,7 +110,7 @@ namespace fromjson
 
         private bool GetCoinDataIfNeeded(ref CoinSettings coin)
         {
-            if ((DateTime.Now - coin.res_date).TotalSeconds < 60)
+            if ((DateTime.Now - coin.res_date).TotalSeconds < 10)
                 return true;
 
             return GetCoinData(ref coin);

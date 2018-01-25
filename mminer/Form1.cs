@@ -351,7 +351,6 @@ namespace mminer
 
         private void refresh_workers(bool allow_change_coin = true)
         {
-            return;
             enabled_workers.Clear();
             db.select(qry, new db_sqlite.dell((System.Data.Common.DbDataRecord record) =>
             {
@@ -563,7 +562,7 @@ namespace mminer
         {
             if (is_running.Value && is_miner_running.Value) //times
             {
-                db.update_or_insert("insert into times (id_pool, dat) values (" + current_id_running + ", CURRENT_TIMESTAMP); ");
+                db.update_or_insert("insert into times (id_pool, dat) values (" + current_id_running + ", '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'); ");
                 foreach (Control c in panel1.Controls)
                 {
                     if (c is work_item)
