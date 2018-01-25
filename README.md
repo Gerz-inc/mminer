@@ -11,5 +11,4 @@
 
 ```
     git clone https://github.com/Gerz-inc/mminer
-    git submodule update
 ```
