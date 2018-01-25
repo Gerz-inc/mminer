@@ -141,11 +141,15 @@ namespace fromjson
                         rate_min = 0;
 
                     double diff = 0;
-                    if (coin.response != null) coin.response.SelectToken(coin.diff_path).Value<double>();
+                    if (coin.response != null)
+                    {
+                        string str = coin.response.SelectToken(coin.diff_path).ToString();
+                        Double.TryParse(str.Replace(".", ","), out diff);
+                    }
                     else if (!Double.TryParse(coin.response_raw.Replace(".", ","), out diff))
                         return new KeyValuePair<double, double>(-1, 0);
 
-                    while (diff > 1000) diff /= 1000; // to xxx.xx
+                    diff /= 1000; // to xxx.xx
                     double rate = (rate_max - rate_min) / (coin.diff_max - coin.diff_min) * (diff - coin.diff_min);
                     rate = rate > rate_max ? rate_max : (rate < rate_min ? rate_min : rate);
                     return new KeyValuePair<double, double>(diff, rate);
