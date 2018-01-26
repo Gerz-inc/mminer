@@ -19,6 +19,7 @@ namespace ccminer
 
         public delegate void dell(string text, Color col);
         public delegate void dell2(string text);
+        public delegate void delle(object sendingProcess, DataReceivedEventArgs outLine);
 
         public void run_thread(string name, string args, int current_id_running, ref_bool is_miner_running, ref_bool is_running, string_pipe pipe)
         {
@@ -39,25 +40,47 @@ namespace ccminer
                             Arguments = args,
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            
                             CreateNoWindow = true
                         }
                     };
 
-                    //is not supported
+                    delle d = new delle((object sendingProcess, DataReceivedEventArgs outLine) =>
+                    {
+                        string line = outLine.Data;
+
+                        if (line != null)
+                        {
+                            if (line.Contains("is not supported")) pipe.write("" + current_id_running.ToString() + "|not_supported");
+                            else if (line.Contains("connection interrupted")) pipe.write("" + current_id_running.ToString() + "|connection interrupted");
+                            else if (line.Contains("Failed to connect")) pipe.write("" + current_id_running.ToString() + "|Failed to connect");
+                            else if (line.Contains("waiting for data")) pipe.write("" + current_id_running.ToString() + "|waiting for data"); 
+                            else if (line.Contains("Could not resolve host")) pipe.write("" + current_id_running.ToString() + "|Could not resolve host");
+
+                            AppendText("\n[miner] ", Color.Yellow);
+                            AppendText(line);
+                        }
+                    });
+
+                    proc.OutputDataReceived += new DataReceivedEventHandler(d);
+                    proc.ErrorDataReceived += new DataReceivedEventHandler(d);
 
                     proc.Start();
-                    while (!proc.StandardOutput.EndOfStream && is_running.Value)
+
+                    proc.BeginOutputReadLine();
+                    proc.BeginErrorReadLine();
+
+                    //is not supported
+                    try
                     {
-                        string line = proc.StandardOutput.ReadLine();
-
-                        if (line.Contains("is not supported"))
+                        while (is_running.Value)
                         {
-                            pipe.write("" + current_id_running.ToString() + "|not_supported");
+                            if (proc.WaitForExit(100)) break;
                         }
-
-                        AppendText("\n[miner] ", Color.Yellow);
-                        AppendText(line);
                     }
+                    catch (Exception ex) { }
+
                     try
                     {
                         proc.Kill();
