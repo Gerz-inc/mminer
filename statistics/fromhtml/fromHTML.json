@@ -1,0 +1,11 @@
+{
+	"coins": [
+    {
+      "name": "sparks",
+      "diff_min": 100.8,
+      "diff_max": 400,
+      "url": "http://bsod.pw/explorer",
+      "diff_regex": "coins.Ethereum.difficulty"
+    }
+	]
+}

@@ -1,11 +1,39 @@
 {
-	"coins": [
+  "coins": [
     {
-      "name": "spark",
-      "diff_min": 100.8,
-      "diff_max": 400,
+      "name": "smart",
+      "url": "https://explorer.smartcash.cc/api/getdifficulty",
+      "diff_min": 300.0,
+      "diff_max": 400.0,
+      "diff_path": ""
+    },
+    {
+      "name": "eth",
       "url": "https://whattomine.com/coins.json",
+      "diff_min": 2.0,
+      "diff_max": 3.0,
       "diff_path": "coins.Ethereum.difficulty"
+    },
+    {
+      "name": "spk",
+      "url": "http://spk.explorerz.top:3019/api/getdifficulty",
+      "diff_min": 300.0,
+      "diff_max": 700.0,
+      "diff_path": ""
+    },
+    {
+      "name": "smart",
+      "url": "https://pool-asia.smartcash.cc/index.php?page=api&action=getpoolstatus&api_key=16eba0b64ca3173e903c0cfd1a3c3bb8c49a397beca648b6e89710286db4444e",
+      "diff_min": 300.0,
+      "diff_max": 400.0,
+      "diff_path": "getpoolstatus.data.networkdiff"
+    },
+    {
+      "name": "gbx",
+      "url": "http://explorer.gobyte.network:5001/api/getdifficulty",
+      "diff_min": 1200.0,
+      "diff_max": 1400.0,
+      "diff_path": ""
     }
-	]
+  ]
 }

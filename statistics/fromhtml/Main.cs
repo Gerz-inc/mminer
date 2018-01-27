@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using static fromJSON.Plugin;
+using static fromHTML.Plugin;
 
-namespace fromJSON
+namespace fromHTML
 {
     public partial class Main : Form
     {
@@ -36,7 +36,7 @@ namespace fromJSON
                 ListViewItem item = new ListViewItem(coin.name.ToUpper());
                 item.SubItems.Add(String.Format("{0:0.00} - {1:0.00}", coin.diff_min, coin.diff_max));
                 item.SubItems.Add(coin.url);
-                item.SubItems.Add(coin.diff_path);
+                item.SubItems.Add(coin.diff_row_regex);
                 coinsListView.Items.Add(item);
             }
 
@@ -59,7 +59,7 @@ namespace fromJSON
             diffMinTextBox.Text = coin.diff_min.ToString();
             diffMaxTextBox.Text = coin.diff_max.ToString();
             urlTextBox.Text = coin.url;
-            diffPathTextBox.Text = coin.diff_path;
+            diffPathTextBox.Text = coin.diff_row_regex;
 
             deleteButton.Visible = sel_coin >= 0;
             modifyButton.Visible = sel_coin >= 0;
@@ -74,7 +74,7 @@ namespace fromJSON
             Double.TryParse(diffMinTextBox.Text, out coin.diff_min);
             Double.TryParse(diffMaxTextBox.Text, out coin.diff_max);
             coin.url = urlTextBox.Text;
-            coin.diff_path = diffPathTextBox.Text;
+            coin.diff_row_regex = diffPathTextBox.Text;
             return coin;
         }
 

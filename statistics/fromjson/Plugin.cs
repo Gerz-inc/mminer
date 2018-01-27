@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using baseFunc;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
-using System.Linq;
 
-namespace fromjson
+namespace fromJSON
 {
     public class Plugin
     {

@@ -1,4 +1,4 @@
-﻿namespace fromJSON
+﻿namespace fromHTML
 {
     partial class Main
     {
@@ -117,11 +117,11 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(76, 77);
+            this.label6.Location = new System.Drawing.Point(82, 77);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(82, 13);
+            this.label6.Size = new System.Drawing.Size(76, 13);
             this.label6.TabIndex = 22;
-            this.label6.Text = "Path to difficulty";
+            this.label6.Text = "Difficulty regex";
             // 
             // label5
             // 
@@ -198,11 +198,11 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(109, 51);
+            this.label7.Location = new System.Drawing.Point(69, 51);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(49, 13);
+            this.label7.Size = new System.Drawing.Size(89, 13);
             this.label7.TabIndex = 13;
-            this.label7.Text = "API URL";
+            this.label7.Text = "HTML page URL";
             // 
             // diffMaxTextBox
             // 
@@ -274,12 +274,12 @@
             // 
             // columnHeader10
             // 
-            this.columnHeader10.Text = "API URL";
+            this.columnHeader10.Text = "HTML page URL";
             this.columnHeader10.Width = 250;
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "JSON path";
+            this.columnHeader2.Text = "Regex";
             this.columnHeader2.Width = 220;
             // 
             // button3
@@ -328,7 +328,7 @@
             this.Name = "Main";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Statistic from JSON";
+            this.Text = "Statistic from HTML";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Load += new System.EventHandler(this.Main_Load);
             this.groupBox1.ResumeLayout(false);
