@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.templatesComboBox = new System.Windows.Forms.ComboBox();
             this.urlTextBox = new System.Windows.Forms.TextBox();
             this.rateLabel = new System.Windows.Forms.Label();
             this.checkButton = new System.Windows.Forms.Button();
@@ -36,8 +37,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.coinTextBox = new System.Windows.Forms.TextBox();
-            this.diffPathTextBox = new System.Windows.Forms.TextBox();
-            this.deleteButton = new System.Windows.Forms.Button();
             this.modifyButton = new System.Windows.Forms.Button();
             this.addButton = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
@@ -50,16 +49,16 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.button3 = new System.Windows.Forms.Button();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.templatesComboBox);
             this.groupBox1.Controls.Add(this.urlTextBox);
             this.groupBox1.Controls.Add(this.rateLabel);
             this.groupBox1.Controls.Add(this.checkButton);
@@ -67,8 +66,6 @@
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.coinTextBox);
-            this.groupBox1.Controls.Add(this.diffPathTextBox);
-            this.groupBox1.Controls.Add(this.deleteButton);
             this.groupBox1.Controls.Add(this.modifyButton);
             this.groupBox1.Controls.Add(this.addButton);
             this.groupBox1.Controls.Add(this.label7);
@@ -78,34 +75,43 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(700, 132);
+            this.groupBox1.Size = new System.Drawing.Size(700, 107);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
+            // 
+            // templatesComboBox
+            // 
+            this.templatesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.templatesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.templatesComboBox.Location = new System.Drawing.Point(561, 48);
+            this.templatesComboBox.Name = "templatesComboBox";
+            this.templatesComboBox.Size = new System.Drawing.Size(131, 21);
+            this.templatesComboBox.TabIndex = 26;
             // 
             // urlTextBox
             // 
             this.urlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.urlTextBox.Location = new System.Drawing.Point(164, 48);
             this.urlTextBox.Name = "urlTextBox";
-            this.urlTextBox.Size = new System.Drawing.Size(528, 20);
+            this.urlTextBox.Size = new System.Drawing.Size(381, 20);
             this.urlTextBox.TabIndex = 25;
             // 
             // rateLabel
             // 
-            this.rateLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.rateLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.rateLabel.Location = new System.Drawing.Point(230, 102);
+            this.rateLabel.Location = new System.Drawing.Point(245, 77);
             this.rateLabel.Name = "rateLabel";
-            this.rateLabel.Size = new System.Drawing.Size(214, 18);
+            this.rateLabel.Size = new System.Drawing.Size(249, 18);
             this.rateLabel.TabIndex = 24;
             this.rateLabel.Text = "Difficulty";
-            this.rateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.rateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // checkButton
             // 
-            this.checkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkButton.Location = new System.Drawing.Point(450, 100);
+            this.checkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkButton.Location = new System.Drawing.Point(164, 75);
             this.checkButton.Name = "checkButton";
             this.checkButton.Size = new System.Drawing.Size(75, 23);
             this.checkButton.TabIndex = 23;
@@ -117,11 +123,10 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(82, 77);
+            this.label6.Location = new System.Drawing.Point(86, 77);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(76, 13);
+            this.label6.Size = new System.Drawing.Size(0, 13);
             this.label6.TabIndex = 22;
-            this.label6.Text = "Difficulty regex";
             // 
             // label5
             // 
@@ -151,34 +156,14 @@
             this.coinTextBox.Size = new System.Drawing.Size(133, 20);
             this.coinTextBox.TabIndex = 19;
             // 
-            // diffPathTextBox
-            // 
-            this.diffPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.diffPathTextBox.Location = new System.Drawing.Point(164, 74);
-            this.diffPathTextBox.Name = "diffPathTextBox";
-            this.diffPathTextBox.Size = new System.Drawing.Size(528, 20);
-            this.diffPathTextBox.TabIndex = 18;
-            // 
-            // deleteButton
-            // 
-            this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.deleteButton.Location = new System.Drawing.Point(164, 100);
-            this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(60, 23);
-            this.deleteButton.TabIndex = 17;
-            this.deleteButton.Text = "Delete";
-            this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Visible = false;
-            this.deleteButton.Click += new System.EventHandler(this.button1_Click);
-            // 
             // modifyButton
             // 
             this.modifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.modifyButton.Location = new System.Drawing.Point(531, 100);
+            this.modifyButton.Location = new System.Drawing.Point(500, 75);
             this.modifyButton.Name = "modifyButton";
-            this.modifyButton.Size = new System.Drawing.Size(80, 23);
+            this.modifyButton.Size = new System.Drawing.Size(97, 23);
             this.modifyButton.TabIndex = 15;
-            this.modifyButton.Text = "Modify";
+            this.modifyButton.Text = "Save";
             this.modifyButton.UseVisualStyleBackColor = true;
             this.modifyButton.Visible = false;
             this.modifyButton.Click += new System.EventHandler(this.modifyButton_Click);
@@ -186,9 +171,9 @@
             // addButton
             // 
             this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.addButton.Location = new System.Drawing.Point(617, 100);
+            this.addButton.Location = new System.Drawing.Point(603, 75);
             this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(75, 23);
+            this.addButton.Size = new System.Drawing.Size(89, 23);
             this.addButton.TabIndex = 14;
             this.addButton.Text = "Add";
             this.addButton.UseVisualStyleBackColor = true;
@@ -244,23 +229,24 @@
             // 
             // coinsListView
             // 
-            this.coinsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.coinsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.coinsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader3,
             this.columnHeader10,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader4});
             this.coinsListView.FullRowSelect = true;
             this.coinsListView.GridLines = true;
-            this.coinsListView.Location = new System.Drawing.Point(12, 150);
+            this.coinsListView.Location = new System.Drawing.Point(12, 125);
             this.coinsListView.Name = "coinsListView";
-            this.coinsListView.Size = new System.Drawing.Size(700, 328);
+            this.coinsListView.Size = new System.Drawing.Size(700, 382);
             this.coinsListView.TabIndex = 5;
             this.coinsListView.UseCompatibleStateImageBehavior = false;
             this.coinsListView.View = System.Windows.Forms.View.Details;
-            this.coinsListView.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            this.coinsListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.coinsListView_MouseDoubleClick);
             // 
             // columnHeader1
             // 
@@ -279,30 +265,12 @@
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Regex";
-            this.columnHeader2.Width = 220;
+            this.columnHeader2.Text = "Template";
+            this.columnHeader2.Width = 160;
             // 
-            // button3
+            // columnHeader4
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(607, 484);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(105, 23);
-            this.button3.TabIndex = 9;
-            this.button3.Text = "Save";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // closeButton
-            // 
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.Location = new System.Drawing.Point(497, 484);
-            this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(105, 23);
-            this.closeButton.TabIndex = 10;
-            this.closeButton.Text = "Close";
-            this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.button4_Click);
+            this.columnHeader4.Text = "Remove";
             // 
             // label4
             // 
@@ -318,8 +286,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(724, 519);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.button3);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.coinsListView);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -344,8 +310,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListView coinsListView;
         private System.Windows.Forms.ColumnHeader columnHeader10;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox diffMaxTextBox;
         private System.Windows.Forms.Label label2;
@@ -353,10 +317,8 @@
         private System.Windows.Forms.Button modifyButton;
         private System.Windows.Forms.Button addButton;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox coinTextBox;
-        private System.Windows.Forms.TextBox diffPathTextBox;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader2;
@@ -365,5 +327,7 @@
         private System.Windows.Forms.Label rateLabel;
         private System.Windows.Forms.Button checkButton;
         private System.Windows.Forms.TextBox urlTextBox;
+        private System.Windows.Forms.ComboBox templatesComboBox;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
     }
 }

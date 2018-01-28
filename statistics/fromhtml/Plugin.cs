@@ -14,26 +14,33 @@ namespace fromHTML
     {
         private string plugin_name;
         private string json_file_name;
+    
+        public struct HostTemplate
+        {
+            public string name;
+            public Dictionary<string, string> req_headers;
+            public Dictionary<string, string> req_cookies;
+            
+            public string diff_row_regex;
+            public string diff_data_regex;
+            public int diff_data_i;
+        }
 
         public struct CoinSettings
         {
             public string name;
             public string url;
-            public Dictionary<string, string> req_headers;
-            public Dictionary<string, string> req_cookies;
+            public string template;
 
             public double diff_min;
             public double diff_max;
-            public string diff_row_regex;
-            public string diff_row_search;
-            public string diff_data_regex;
-            public int diff_data_i;
 
             public DateTime req_date;
             public DateTime res_date;
             public string response;
         }
-        
+
+        public List<HostTemplate> templates = new List<HostTemplate>();
         public List<CoinSettings> coins = new List<CoinSettings>();
         private int req_timeout = 10000;
 
@@ -59,30 +66,41 @@ namespace fromHTML
             {
                 string json_str = File.ReadAllText(json_file_name);
                 JObject response = JObject.Parse(json_str);
-                JArray coins = response.SelectToken("coins").Value<JArray>();
 
+                JArray templates = response.SelectToken("templates").Value<JArray>();
+                this.templates.Clear();
+                foreach (var item in templates)
+                {
+                    var templ = new HostTemplate();
+                    templ.name = item.SelectToken("name").Value<string>();
+
+                    JObject headers = item.SelectToken("req_headers").Value<JObject>();
+                    templ.req_headers = new Dictionary<string, string>();
+                    foreach (var item_h in headers)
+                        templ.req_headers[item_h.Key] = item_h.Value.Value<string>();
+                    JObject cookies = item.SelectToken("req_cookies").Value<JObject>();
+                    templ.req_cookies = new Dictionary<string, string>();
+                    foreach (var item_c in cookies)
+                        templ.req_cookies[item_c.Key] = item_c.Value.Value<string>();
+
+                    templ.diff_row_regex = item.SelectToken("diff_row_regex").Value<string>();
+                    templ.diff_data_regex = item.SelectToken("diff_data_regex").Value<string>();
+                    templ.diff_data_i = item.SelectToken("diff_data_i").Value<int>();
+
+                    this.templates.Add(templ);
+                }
+
+                JArray coins = response.SelectToken("coins").Value<JArray>();
                 this.coins.Clear();
                 foreach (var item in coins)
                 {
                     var coin = new CoinSettings();
                     coin.name = item.SelectToken("name").Value<string>();
                     coin.url = item.SelectToken("url").Value<string>();
-
-                    JObject headers = item.SelectToken("req_headers").Value<JObject>();
-                    coin.req_headers = new Dictionary<string, string>();
-                    foreach (var item_h in headers)
-                        coin.req_headers[item_h.Key] = item_h.Value.Value<string>();
-                    JObject cookies = item.SelectToken("req_cookies").Value<JObject>();
-                    coin.req_cookies = new Dictionary<string, string>();
-                    foreach (var item_c in cookies)
-                        coin.req_cookies[item_c.Key] = item_c.Value.Value<string>();
+                    coin.template = item.SelectToken("template").Value<string>();
 
                     coin.diff_min = item.SelectToken("diff_min").Value<double>();
                     coin.diff_max = item.SelectToken("diff_max").Value<double>();
-                    coin.diff_row_regex = item.SelectToken("diff_row_regex").Value<string>();
-                    coin.diff_row_search = item.SelectToken("diff_row_search").Value<string>();
-                    coin.diff_data_regex = item.SelectToken("diff_data_regex").Value<string>();
-                    coin.diff_data_i = item.SelectToken("diff_data_i").Value<int>();
 
                     this.coins.Add(coin);
                 }
@@ -113,10 +131,10 @@ namespace fromHTML
                 JObject item = new JObject();
                 item["name"] = coin.name;
                 item["url"] = coin.url;
+                item["template"] = coin.template;
 
                 item["diff_min"] = coin.diff_min;
                 item["diff_max"] = coin.diff_max;
-                item["diff_row_regex"] = coin.diff_row_regex;
 
                 coins.Add(item);
             }
@@ -143,7 +161,8 @@ namespace fromHTML
             coin.req_date = DateTime.Now;
 
             bool sts = false;
-            bool? req_str = Request(coin, out coin.response, false, req_timeout);
+            var templ_i = GetTemplateByName(coin.template);
+            bool? req_str = Request(coin, templ_i.Value.Value, out coin.response, false, req_timeout);
             if (req_str == true)
             {
                 coin.res_date = DateTime.Now;
@@ -153,7 +172,7 @@ namespace fromHTML
             return sts;
         }
 
-        public static bool? Request(CoinSettings coin, out string response, bool escaped = false, int timeout = 10000)
+        public static bool? Request(CoinSettings coin, HostTemplate templ, out string response, bool escaped = false, int timeout = 10000)
         {
             try
             {
@@ -165,7 +184,7 @@ namespace fromHTML
                 Uri url = new Uri(query);
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
 
-                foreach (var item_h in coin.req_headers)
+                foreach (var item_h in templ.req_headers)
                     switch (item_h.Key)
                     {
                         case "User-Agent": req.UserAgent = item_h.Value; break;
@@ -173,7 +192,7 @@ namespace fromHTML
 
                 if (req.CookieContainer == null)
                     req.CookieContainer = new CookieContainer();
-                foreach (var item_c in coin.req_cookies)
+                foreach (var item_c in templ.req_cookies)
                     req.CookieContainer.Add(new Cookie(item_c.Key, item_c.Value, "/", url.Host));
             
                 req.Timeout = timeout;
@@ -193,7 +212,7 @@ namespace fromHTML
             }
         }
 
-        public KeyValuePair<double, double> GetCoinDifficulty(ref CoinSettings coin)
+        public KeyValuePair<double, double> GetCoinDifficulty(ref CoinSettings coin, HostTemplate? templ)
         {
             if (GetCoinDataIfNeeded(ref coin))
             {
@@ -203,20 +222,20 @@ namespace fromHTML
                         rate_min = 0;
 
                     double diff = 0;
-                    if (coin.response != null)
+                    if (coin.response != null && templ != null)
                     {
                         // Ищем строки
-                        foreach (Match m in Regex.Matches(coin.response, coin.diff_row_regex, RegexOptions.IgnoreCase))
+                        foreach (Match m in Regex.Matches(coin.response, templ.Value.diff_row_regex, RegexOptions.IgnoreCase))
                         {
                             if (m.Success)
                             {
                                 string row_html = m.Groups[1].Captures[0].ToString();
-                                if (!row_html.Contains(coin.diff_row_search)) continue;
+                                if (!row_html.ToLower().Contains(coin.name.ToLower())) continue;
 
                                 int idx_ = 0;
-                                foreach (Match m2 in Regex.Matches(row_html, coin.diff_data_regex, RegexOptions.IgnoreCase))
+                                foreach (Match m2 in Regex.Matches(row_html, templ.Value.diff_data_regex, RegexOptions.IgnoreCase))
                                 {
-                                    if (m2.Success && idx_ == coin.diff_data_i)
+                                    if (m2.Success && idx_ == templ.Value.diff_data_i)
                                     {
                                         string str = m2.Groups[1].Captures[0].ToString();
                                         Double.TryParse(str.Replace(".", ","), out diff);
@@ -245,7 +264,10 @@ namespace fromHTML
                 CoinSettings coin = coins[i];
                 if (coin.name.ToLower() == coin_name.ToLower())
                 {
-                    var diff = GetCoinDifficulty(ref coin);
+                    HostTemplate? templ = templates.Find(x => x.name == coin.template);
+                    if (templ == null) return new KeyValuePair<double, double>(-1, 0);
+
+                    var diff = GetCoinDifficulty(ref coin, templ);
                     this.coins[i] = coin; // save
 
                     if (diff.Key >= 0)
@@ -253,6 +275,17 @@ namespace fromHTML
                 }
             }
             return new KeyValuePair<double, double>(-1, 0);
+        }
+
+        public KeyValuePair<int, HostTemplate>? GetTemplateByName(string name)
+        {
+            for (int i = 0; i < templates.Count; i++)
+            {
+                var templ = this.templates[i];
+                if (templ.name == name)
+                    return new KeyValuePair<int, HostTemplate>(i, templ);
+            }
+            return null;
         }
 
         #endregion

@@ -1,11 +1,25 @@
 {
-	"coins": [
+  "templates": [
     {
-      "name": "sparks",
-      "diff_min": 100.8,
-      "diff_max": 400,
-      "url": "http://bsod.pw/explorer",
-      "diff_regex": "coins.Ethereum.difficulty"
+      "name": "bsod.pw",
+      "req_headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"
+      },
+      "req_cookies": {
+        "protected": "b54d40a59b1be09785ff6693451f5950"
+      },
+      "diff_row_regex": "<\\s*tr\\sclass=\"ssrow\"[^>]*>(.*?)<\\s*\\/\\s*tr>",
+      "diff_data_regex": "<\\s*td\\sdata=\"([^\"]+)\"[^>]*>(.*?)<\\s*\\/\\s*td>",
+      "diff_data_i": 0
     }
-	]
+  ],
+  "coins": [
+    {
+      "name": "luxcoin",
+      "url": "http://bsod.pw/explorer",
+      "template": "bsod.pw",
+      "diff_min": 19000.8,
+      "diff_max": 25000.0
+    }
+  ]
 }

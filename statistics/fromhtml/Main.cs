@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static fromHTML.Plugin;
@@ -15,8 +16,7 @@ namespace fromHTML
         {
             InitializeComponent();
             this.plugin = plugin;
-
-            deleteButton.Visible = false;
+            
             modifyButton.Visible = false;
             checkButton.Visible = false;
             rateLabel.Text = "";
@@ -25,6 +25,7 @@ namespace fromHTML
         private void Main_Load(object sender, EventArgs e)
         {
             plugin.ReadSettings();
+            reloadTemplatesList();
             reloadPoolsList();
         }
 
@@ -36,35 +37,23 @@ namespace fromHTML
                 ListViewItem item = new ListViewItem(coin.name.ToUpper());
                 item.SubItems.Add(String.Format("{0:0.00} - {1:0.00}", coin.diff_min, coin.diff_max));
                 item.SubItems.Add(coin.url);
-                item.SubItems.Add(coin.diff_row_regex);
+                item.SubItems.Add(coin.template);
+                item.SubItems.Add("-");
                 coinsListView.Items.Add(item);
             }
 
             sel_coin = -1;
-            deleteButton.Visible = false;
             modifyButton.Visible = false;
             checkButton.Visible = false;
             rateLabel.Text = "";
         }
-        
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+
+        private void reloadTemplatesList()
         {
-            var idxs = (sender as ListView).SelectedIndices;
-            int idx = idxs.Count > 0 ? idxs[0] : -1;
-            sel_coin = idx;
-            if (idx < 0) return;
-
-            CoinSettings coin = plugin.coins[idx];
-            coinTextBox.Text = coin.name.ToUpper();
-            diffMinTextBox.Text = coin.diff_min.ToString();
-            diffMaxTextBox.Text = coin.diff_max.ToString();
-            urlTextBox.Text = coin.url;
-            diffPathTextBox.Text = coin.diff_row_regex;
-
-            deleteButton.Visible = sel_coin >= 0;
-            modifyButton.Visible = sel_coin >= 0;
-            checkButton.Visible = sel_coin >= 0;
-            rateLabel.Text = "";
+            templatesComboBox.Items.Clear();
+            templatesComboBox.Items.Add("- Not selected -");
+            foreach (var templ in plugin.templates)
+                templatesComboBox.Items.Add(templ.name);
         }
 
         private CoinSettings coinFromFields()
@@ -74,7 +63,11 @@ namespace fromHTML
             Double.TryParse(diffMinTextBox.Text, out coin.diff_min);
             Double.TryParse(diffMaxTextBox.Text, out coin.diff_max);
             coin.url = urlTextBox.Text;
-            coin.diff_row_regex = diffPathTextBox.Text;
+
+            coin.template = "";
+            if (templatesComboBox.SelectedIndex > 0)
+                coin.template = (string)templatesComboBox.Items[templatesComboBox.SelectedIndex];
+
             return coin;
         }
 
@@ -99,17 +92,13 @@ namespace fromHTML
             tb.Text = rgx.Replace(tb.Text, "");
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ClearForm()
         {
-            plugin.SaveSettings();
-            saved = true;
-
-            Close();
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            Close();
+            coinTextBox.Text = "";
+            diffMinTextBox.Text = "";
+            diffMaxTextBox.Text = "";
+            urlTextBox.Text = "";
+            templatesComboBox.SelectedIndex = 0;
         }
 
         private void modifyButton_Click(object sender, EventArgs e)
@@ -119,7 +108,9 @@ namespace fromHTML
             CoinSettings coin = coinFromFields();
             plugin.coins[sel_coin] = coin;
             reloadPoolsList();
-            saved = false;
+
+            plugin.SaveSettings();
+            saved = true;
         }
         
         private void addButton_Click(object sender, EventArgs e)
@@ -128,13 +119,8 @@ namespace fromHTML
 
             CoinSettings coin = coinFromFields();
             plugin.coins.Add(coin);
-            reloadPoolsList();
-        }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (sel_coin < 0) return;
 
-            plugin.coins.RemoveAt(sel_coin);
+            ClearForm();
             reloadPoolsList();
         }
 
@@ -142,7 +128,8 @@ namespace fromHTML
         {
             if (sel_coin < 0) return;
             CoinSettings coin = plugin.coins[sel_coin];
-            var diff = plugin.GetCoinDifficulty(ref coin);
+            var templ_i = plugin.GetTemplateByName(coin.template);
+            var diff = plugin.GetCoinDifficulty(ref coin, templ_i.Value.Value);
             if (diff.Key >= 0)
             {
                 string txt = String.Format("Difficulty {0:0.000} [{1:0.00}]", diff.Key, diff.Value);
@@ -163,6 +150,60 @@ namespace fromHTML
                         plugin.SaveSettings();
                 }
             }
+        }
+
+        private void coinsListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            #region //определение элемента листвью
+            int curr_item = 0;
+            try
+            {
+                Point mousePositioni = coinsListView.PointToClient(Control.MousePosition);
+                ListViewHitTestInfo hiti = coinsListView.HitTest(mousePositioni);
+                curr_item = hiti.Item.Index;
+            }
+            catch (Exception ex) { }
+
+            //three step to detected which of columns of items to was clicked
+            int columnindex = 0;
+            try
+            {
+                Point mousePosition = coinsListView.PointToClient(Control.MousePosition);
+                ListViewHitTestInfo hit = coinsListView.HitTest(mousePosition);
+                columnindex = hit.Item.SubItems.IndexOf(hit.SubItem);
+            }
+            catch (Exception ex) { }
+
+            if (coinsListView.Items.Count == 0) return;
+            #endregion
+
+            // Remove
+            if (columnindex == 4)
+            {
+                plugin.coins.RemoveAt(curr_item);
+                plugin.SaveSettings();
+                saved = true;
+
+                reloadPoolsList();
+                return;
+            }
+
+            sel_coin = curr_item;
+
+            CoinSettings coin = plugin.coins[curr_item];
+            coinTextBox.Text = coin.name.ToUpper();
+            diffMinTextBox.Text = coin.diff_min.ToString();
+            diffMaxTextBox.Text = coin.diff_max.ToString();
+            urlTextBox.Text = coin.url;
+
+            templatesComboBox.SelectedIndex = 0;
+            var templ_i = plugin.GetTemplateByName(coin.template);
+            if (templ_i != null)
+                templatesComboBox.SelectedIndex = templ_i.Value.Key + 1;
+
+            modifyButton.Visible = sel_coin >= 0;
+            checkButton.Visible = sel_coin >= 0;
+            rateLabel.Text = "";
         }
     }
 }
