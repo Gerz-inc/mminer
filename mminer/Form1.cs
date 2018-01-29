@@ -27,12 +27,14 @@ namespace mminer
         object lock_is_stat_thread_running = new object();
         DateTime curr_date = DateTime.Now;
 
+        double threshold_switch_delta = 0.5;
+
         db_sqlite db = new db_sqlite();
 
-        private string qry = "select a.id, a.miner, a.statistic, a.manual_diff, " +
+        private string qry = "select a.id, a.miner, a.statistic, a.manual_diff, a.min_running, " +
                              "b.name as pool_name, b.url, b.pass, " +
                              "c.name as connection_type_name, " +
-                             "d.name as algo_name, d.ccminer as algo_name_ccminer, " +
+                             "d.name as algo_name, " +
                              "e.name as wallet_name, e.coin, " +
                              "g.name as exchange_name " +
                              "from sets a " +
@@ -44,6 +46,7 @@ namespace mminer
                              "where a.enabled = 1; ";
 
         public delegate void dell(bool b);
+        public delegate void dell2(bool b, bool b2);
 
         public Form1()
         {
@@ -124,6 +127,9 @@ namespace mminer
 
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
+            timer5.Stop();
+            toolStripButton8.Visible = false;
+
             if (is_running.Value && is_miner_running.Value)
             {
                 is_running.Value = false;
@@ -137,8 +143,131 @@ namespace mminer
             }
             else
             {
+                //check difficulty
+                check_difficulty(true, true);
+
+                bool ready = false;
+                while (!ready)
+                {
+                    Thread.Sleep(100);
+                    Application.DoEvents();
+                    lock (lock_is_stat_thread_running)
+                    {
+                        if (!is_stat_thread_running) ready = true;
+                    }
+                }
+
                 run_miner();
             }
+        }
+
+        private void check_difficulty(bool allow_change_coin = false, bool skip_check = false)
+        {
+            lock (lock_is_stat_thread_running)
+            {
+                if (is_stat_thread_running) return;
+                is_stat_thread_running = true;
+            }
+
+            ThreadPool.QueueUserWorkItem(new WaitCallback((x) =>
+            {
+                Dictionary<string, bool> check = new Dictionary<string, bool>();
+
+                db.select(qry, new db_sqlite.dell((System.Data.Common.DbDataRecord record) =>
+                {
+                    string statistic = record["statistic"].ToString();
+                    string coin = record["coin"].ToString();
+                    string key = statistic + "|" + coin;
+                    if (!check.ContainsKey(key)) check.Add(key, false);
+                    return true;
+                }));
+
+                foreach (var it in check)
+                {
+                    string[] exp = baseFunc.base_func.explode("|", it.Key);
+                    string dll = exp[0];
+                    string coin = exp[1];
+
+                    System.Reflection.Assembly DLL = null;
+                    string p = Application.StartupPath + dlls.PATH_STATISTICS + dll + ".dll";
+                    if (File.Exists(p))
+                    {
+                        DLL = System.Reflection.Assembly.LoadFile(p);
+                        if (DLL != null)
+                        {
+                            Type t = DLL.GetType(dll + ".Call");
+                            var m = t.GetMethod("GetDifficultyByName");
+                            if (m != null)
+                            {
+                                var a = Activator.CreateInstance(t);
+                                KeyValuePair<double, double> result = (KeyValuePair<double, double>)m.Invoke(a, new Object[] { coin });
+
+                                Invoke(new dell((bool i) =>
+                                {
+                                    foreach (var c in enabled_workers)
+                                    {
+                                        if (c.Value.statistic == dll && c.Value.coin == coin)
+                                        {
+                                            if (result.Key != -1)
+                                            {
+                                                c.Value.coin_stat_diff = result.Value;
+                                                c.Value.abs_diff = result.Key;
+                                            }
+                                            else
+                                            {
+                                                c.Value.coin_stat_diff = -1;
+                                                c.Value.abs_diff = -1;
+                                            }
+                                        }
+                                    }
+
+                                }), new Object[] { false });
+                            }
+                            else
+                            {
+                                m = t.GetMethod("GetDifficulty");
+                                if (m != null)
+                                {
+                                    var a = Activator.CreateInstance(t);
+                                    KeyValuePair<double, double> result = (KeyValuePair<double, double>)m.Invoke(a, new Object[] { });
+
+                                    Invoke(new dell((bool i) =>
+                                    {
+                                        foreach (var c in enabled_workers)
+                                        {
+                                            if (c.Value.statistic == dll)
+                                            {
+                                                if (result.Key != -1)
+                                                {
+                                                    c.Value.coin_stat_diff = result.Value;
+                                                    c.Value.abs_diff = result.Key;
+                                                }
+                                                else
+                                                {
+                                                    c.Value.coin_stat_diff = -1;
+                                                    c.Value.abs_diff = -1;
+                                                }
+                                            }
+                                        }
+                                    }), new Object[] { false });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Invoke(new dell2((bool i, bool i2) =>
+                {
+                    refresh_workers_display();
+                    sort_workers(i, i2);
+
+                }), new Object[] { allow_change_coin, skip_check });
+
+                lock (lock_is_stat_thread_running)
+                {
+                    is_stat_thread_running = false;
+                }
+            }));
         }
 
         private void run_miner()
@@ -169,9 +298,9 @@ namespace mminer
                             pipe.clear();
                             is_running.Value = true;
                             is_miner_running.Value = true;
+                            miner_settings.start_running = DateTime.Now;
 
-                            string args = "-a " + miner_settings.algo_name_ccminer + " -o " + miner_settings.connection_type_name +
-                                          miner_settings.url + " -u " + miner_settings.wallet_name + " -p " + miner_settings.pass;
+                            List<string> args = new List<string>() { miner_settings.algo_name, miner_settings.connection_type_name, miner_settings.url, miner_settings.wallet_name, miner_settings.pass };
 
                             var a = Activator.CreateInstance(t);
                             var result = m.Invoke(a, new Object[] { exe, args, current_id_running, this, richTextBox1, is_miner_running, is_running, pipe });
@@ -240,118 +369,14 @@ namespace mminer
         {
             if (is_running.Value && is_miner_running.Value)
             {
-                lock (lock_is_stat_thread_running)
-                {
-                    if (is_stat_thread_running) return;
-                    is_stat_thread_running = true;
-                }
-
-                //check current difficulty
-                ThreadPool.QueueUserWorkItem(new WaitCallback((x) =>
-                {
-                    Dictionary<string, bool> check = new Dictionary<string, bool>();
-
-                    db.select(qry, new db_sqlite.dell((System.Data.Common.DbDataRecord record) =>
-                    {
-                        string statistic = record["statistic"].ToString();
-                        string coin = record["coin"].ToString();
-                        string key = statistic + "|" + coin;
-                        if (!check.ContainsKey(key)) check.Add(key, false);
-                        return true;
-                    }));
-
-                    foreach (var it in check)
-                    {
-                        string[] exp = baseFunc.base_func.explode("|", it.Key);
-                        string dll = exp[0];
-                        string coin = exp[1];
-
-                        System.Reflection.Assembly DLL = null;
-                        string p = Application.StartupPath + dlls.PATH_STATISTICS + dll + ".dll";
-                        if (File.Exists(p))
-                        {
-                            DLL = System.Reflection.Assembly.LoadFile(p);
-                            if (DLL != null)
-                            {
-                                Type t = DLL.GetType(dll + ".Call");
-                                var m = t.GetMethod("GetDifficultyByName");
-                                if (m != null)
-                                {
-                                    var a = Activator.CreateInstance(t);
-                                    KeyValuePair<double, double> result = (KeyValuePair<double, double>)m.Invoke(a, new Object[] { coin });
-
-                                    Invoke(new dell((bool i) =>
-                                    {
-                                        foreach (var c in enabled_workers)
-                                        {
-                                            if (c.Value.statistic == dll && c.Value.coin == coin)
-                                            {
-                                                if (result.Key != -1)
-                                                {
-                                                    c.Value.coin_stat_diff = result.Value;
-                                                    c.Value.abs_diff = result.Key;
-                                                }
-                                                else
-                                                {
-                                                    c.Value.coin_stat_diff = -1;
-                                                    c.Value.abs_diff = -1;
-                                                }
-                                            }
-                                        }
-
-                                        refresh_workers_display();
-                                        sort_workers();
-
-                                    }), new Object[] { false });
-                                }
-                                else
-                                {
-                                    m = t.GetMethod("GetDifficulty");
-                                    if (m != null)
-                                    {
-                                        var a = Activator.CreateInstance(t);
-                                        KeyValuePair<double, double> result = (KeyValuePair<double, double>)m.Invoke(a, new Object[] { });
-
-                                        Invoke(new dell((bool i) =>
-                                        {
-                                            foreach (var c in enabled_workers)
-                                            {
-                                                if (c.Value.statistic == dll)
-                                                {
-                                                    if (result.Key != -1)
-                                                    {
-                                                        c.Value.coin_stat_diff = result.Value;
-                                                        c.Value.abs_diff = result.Key;
-                                                    }
-                                                    else
-                                                    {
-                                                        c.Value.coin_stat_diff = -1;
-                                                        c.Value.abs_diff = -1;
-                                                    }
-                                                }
-                                            }
-
-                                            refresh_workers_display();
-                                            sort_workers();
-
-                                        }), new Object[] { false });
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    lock (lock_is_stat_thread_running)
-                    {
-                        is_stat_thread_running = false;
-                    }
-                }));
+                check_difficulty();
             }
         }
 
         private void refresh_workers(bool allow_change_coin = true)
         {
             enabled_workers.Clear();
+            currnet_sort.Clear();
             db.select(qry, new db_sqlite.dell((System.Data.Common.DbDataRecord record) =>
             {
                 work_item_struct item = new work_item_struct();
@@ -365,10 +390,10 @@ namespace mminer
                 item.pass = record["pass"].ToString();
                 item.connection_type_name = record["connection_type_name"].ToString();
                 item.algo_name = record["algo_name"].ToString();
-                item.algo_name_ccminer = record["algo_name_ccminer"].ToString();
                 item.wallet_name = record["wallet_name"].ToString();
                 item.coin = record["coin"].ToString();
                 item.exchange_name = record["exchange_name"].ToString();
+                item.min_running = base_func.ParseInt32(record["min_running"]);
 
                 enabled_workers.Add(item.id, item);
 
@@ -378,7 +403,7 @@ namespace mminer
             sort_workers(allow_change_coin);
         }
 
-        private void sort_workers(bool allow_change_coin = true)
+        private void sort_workers(bool allow_change_coin = true, bool skip_check = false)
         {
             //unfreeze
             DateTime dt_now = DateTime.Now;
@@ -402,6 +427,51 @@ namespace mminer
 
             if (!s.SequenceEqual(currnet_sort))
             {
+                //check threshold delta and min_running time
+                if (allow_change_coin && !skip_check)
+                {
+                    double current_d = 0;
+                    double f_d = 0;
+                    int test_next_id = 0;
+                    int min_running = 0;
+                    DateTime start_running = DateTime.MinValue;
+                    bool check_ok = true;
+                    for (int i = 0; i < currnet_sort.Count; ++i)
+                    {
+                        int id = currnet_sort[i];
+                        work_item_struct it = enabled_workers[id];
+                        if (i == 0)
+                        {
+                            f_d = it.get_diff();
+                            test_next_id = id;
+                        }
+                        if (id == current_id_running)
+                        {
+                            current_d = it.get_diff();
+                            min_running = it.min_running;
+                            start_running = it.start_running;
+
+                            if (it.cant_run || it.stopped_before != DateTime.MinValue) check_ok = false;
+                        }
+                    }
+                    if (check_ok)
+                    {
+                        if (test_next_id != current_id_running)
+                        {
+                            if (current_d - f_d < threshold_switch_delta)
+                            {
+                                refresh_workers_display();
+                                return;
+                            }
+                        }
+                        if (min_running != 0 && (int)((DateTime.Now - start_running).TotalMinutes) < min_running)
+                        {
+                            refresh_workers_display();
+                            return;
+                        }
+                    }
+                }
+
                 bool change_coin = false;
 
                 currnet_sort = s;
@@ -491,7 +561,7 @@ namespace mminer
                             if (cnt >= 1)
                             {
                                 worker.stopped_msg = what;
-                                worker.stopped_before = DateTime.Now.AddMinutes(30);
+                                worker.stopped_before = DateTime.Now.AddMinutes(60);
                                 refresh_workers_display();
                             }
                             else
@@ -502,7 +572,7 @@ namespace mminer
                         else if (what == "Could not resolve host")
                         {
                             worker.stopped_msg = what;
-                            worker.stopped_before = DateTime.Now.AddMinutes(30);
+                            worker.stopped_before = DateTime.Now.AddMinutes(60);
                             refresh_workers_display();
                         }
                         else if (what == "waiting for data")
@@ -511,7 +581,7 @@ namespace mminer
                             if (cnt > 30)
                             {
                                 worker.stopped_msg = what;
-                                worker.stopped_before = DateTime.Now.AddMinutes(30);
+                                worker.stopped_before = DateTime.Now.AddMinutes(60);
                                 refresh_workers_display();
                             }
                             else
@@ -530,7 +600,7 @@ namespace mminer
                 curr_date = dt;
 
                 //clear
-                db.update_or_insert("delete from times where dat < '" + curr_date.ToString("yyyy-MM-dd") + " 00:00:00'; ");
+                db.update_or_insert("delete from times where dat < '" + curr_date.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss") + "'; ");
 
                 refresh_workers_display();
             }
@@ -579,6 +649,31 @@ namespace mminer
                     }
                 }
             }
+        }
+
+        private int autostart_timer = 10;
+        private void timer5_Tick(object sender, EventArgs e)
+        {
+            if (autostart_timer > 0)
+            {
+                --autostart_timer;
+                toolStripButton8.Text = "Cancel Autostart " + autostart_timer;
+            }
+            else
+            {
+                toolStripButton6_Click(new object(), new EventArgs());
+            }
+        }
+
+        private void toolStripButton8_Click(object sender, EventArgs e)
+        {
+            timer5.Stop();
+            toolStripButton8.Visible = false;
+        }
+
+        private void toolStripButton9_Click(object sender, EventArgs e)
+        {
+            new algo().ShowDialog();
         }
     }
 
@@ -633,7 +728,6 @@ namespace mminer
         public string pass;
         public string connection_type_name;
         public string algo_name;
-        public string algo_name_ccminer;
         public string wallet_name;
         public string coin;
         public string exchange_name;
@@ -642,6 +736,9 @@ namespace mminer
         public string stopped_msg = "";
         public bool cant_run = false;
         public bool is_running = false;
+
+        public int min_running = 0;
+        public DateTime start_running = DateTime.MinValue;
 
         private Dictionary<string, pipe_msg> pipe_msgs = new Dictionary<string, pipe_msg>();
 
@@ -683,6 +780,14 @@ namespace mminer
     {
         public static void AppendText(this RichTextBox box, string text, Color color)
         {
+            if (text.Length > 1)
+            {
+                if (text[1] == '[')
+                {
+                    text = text.Replace("[", "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] [");
+                }
+            }
+
             box.SelectionStart = box.TextLength;
             box.SelectionLength = 0;
 

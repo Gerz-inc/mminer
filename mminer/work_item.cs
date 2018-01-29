@@ -57,10 +57,18 @@ namespace mminer
             string diff_rel = data.get_diff().ToString();
             if (diff_rel.Length > 3) diff_rel = diff_rel.Substring(0, 3);
             label9.Text = diff_rel;
+            label13.Text = data.min_running.ToString();
+            if (data.min_running != 0 && data.is_running && data.start_running != DateTime.MinValue)
+            {
+                int running_min = data.min_running - (int)(DateTime.Now - data.start_running).TotalMinutes;
+                if (running_min < 0) running_min = 0;
+                label15.Text = running_min.ToString();
+            }
+            else label15.Text = "-";
 
             DateTime curr_date = DateTime.Now;
 
-            db.select("select count(*) from times where id_pool = " + data.id + " and dat >='" + curr_date.ToString("yyyy-MM-dd") + " 00:00:00' and dat < '" + curr_date.AddDays(1).ToString("yyyy-MM-dd") + " 00:00:00'; ", new db_sqlite.dell((System.Data.Common.DbDataRecord record) => 
+            db.select("select count(*) from times where id_pool = " + data.id + " and dat >='" + curr_date.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss") + "'; ", new db_sqlite.dell((System.Data.Common.DbDataRecord record) => 
             {
                 int m = baseFunc.base_func.ParseInt32(record[0]);
                 int min = m % 60;

@@ -55,8 +55,10 @@ namespace mminer
                 bool enabled = en == 1 ? true : false;
                 int id_pool = baseFunc.base_func.ParseInt32(record["id_pool"]);
 
+                int min_running = baseFunc.base_func.ParseInt32(record["min_running"]);
+
                 set_item item = new set_item();
-                item.set(id, enabled, id_pool, record["miner"].ToString(), record["statistic"].ToString(), record["manual_diff"].ToString(), new set_item.dell(() => 
+                item.set(id, enabled, id_pool, record["miner"].ToString(), record["statistic"].ToString(), record["manual_diff"].ToString(), min_running, new set_item.dell(() => 
                 {
                     refresh();
                 }));

@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using baseFunc;
 
-namespace ccminer
+namespace uminer
 {
     class Call
     {
@@ -24,17 +24,21 @@ namespace ccminer
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
 
-            var d = Directory.GetDirectories(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\ccminers");
-            foreach (var dd in d)
+            try
             {
-                var dirName = new DirectoryInfo(dd).Name;
-                ret.Add(dirName, "ccminer");
+                var d = Directory.GetDirectories(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\uminers");
+                foreach (var dd in d)
+                {
+                    var dirName = new DirectoryInfo(dd).Name;
+                    ret.Add(dirName, "uminer");
+                }
             }
+            catch(Exception ex) { MessageBox.Show(ex.Message); }
 
             return ret;
         }
 
-        public void run(string name, string args, int current_id_running, Control c, ref RichTextBox console, ref_bool is_miner_running, ref_bool is_running, string_pipe pipe)
+        public void run(string name, List<string> args, int current_id_running, Control c, ref RichTextBox console, ref_bool is_miner_running, ref_bool is_running, string_pipe pipe)
         {
             r.c = c;
             r.console = console;

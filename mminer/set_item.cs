@@ -42,7 +42,7 @@ namespace mminer
             }
         }
 
-        public void set(int id_, bool enabled, int id_pool, string miner, string diff, string manual_diff, dell del_)
+        public void set(int id_, bool enabled, int id_pool, string miner, string diff, string manual_diff, int min_running, dell del_)
         {
             id = id_;
             del = del_;
@@ -79,6 +79,7 @@ namespace mminer
             }
 
             textBox1.Text = manual_diff;
+            textBox2.Text = min_running.ToString();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -116,12 +117,14 @@ namespace mminer
                 return;
             }
 
+            int min_running = baseFunc.base_func.ParseInt32(textBox2.Text);
+
             base_func.ComboBoxItem t = (base_func.ComboBoxItem)comboBox1.Items[comboBox1.SelectedIndex];
 
             string m = (baseFunc.base_func.ParseDouble(textBox1.Text).ToString()).Replace(",", ".");
             string enabled = checkBox1.Checked ? "1" : "0";
 
-            db.update_or_insert("update sets set miner = '" + comboBox2.SelectedItem.ToString() + "', statistic = '" + comboBox5.SelectedItem.ToString() + "', id_pool = " + t.Value.ToString() + ", manual_diff = " + m + ", enabled = " + enabled + " where id = " + id + "; ");
+            db.update_or_insert("update sets set min_running = " + min_running + ", miner = '" + comboBox2.SelectedItem.ToString() + "', statistic = '" + comboBox5.SelectedItem.ToString() + "', id_pool = " + t.Value.ToString() + ", manual_diff = " + m + ", enabled = " + enabled + " where id = " + id + "; ");
             del();
         }
     }

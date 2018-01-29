@@ -36,7 +36,7 @@ namespace mminer
                     catch(Exception ex) { MessageBox.Show("Error in db_sqlite: " + ex.Message + "\n" + ex.StackTrace); }
                 }
             }
-            catch(Exception ex) { ok = false; MessageBox.Show(ex.Message); }
+            catch(Exception ex) { ok = false; }
 
             return ok;
         }
@@ -56,7 +56,7 @@ namespace mminer
                 transaction.Commit();
                 command_u.Dispose();
             }
-            catch(Exception ex) { ok = false; MessageBox.Show(ex.Message); }
+            catch(Exception ex) { ok = false; }
 
             return ok;
         }
@@ -72,7 +72,6 @@ namespace mminer
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
                 Console.WriteLine("[AP] get_db_ram_connection(): " + ex.Message);
                 connection_db_ram = null;
             }
