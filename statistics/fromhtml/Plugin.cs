@@ -246,7 +246,7 @@ namespace fromHTML
                                             return new KeyValuePair<double, double>(-1, 0);
 
                                         double rate = (rate_max - rate_min) / (coin.diff_max - coin.diff_min) * (diff - coin.diff_min);
-                                        return new KeyValuePair<double, double>(diff, rate);
+                                        return new KeyValuePair<double, double>(diff == -1.00 ? -1.01 : diff, rate);
                                     }
                                     idx_ += 1;
                                 }
