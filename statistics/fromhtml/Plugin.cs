@@ -34,6 +34,7 @@ namespace fromHTML
 
             public double diff_min;
             public double diff_max;
+            public double diff_work_min;
 
             public DateTime req_date;
             public DateTime res_date;
@@ -101,6 +102,7 @@ namespace fromHTML
 
                     coin.diff_min = item.SelectToken("diff_min").Value<double>();
                     coin.diff_max = item.SelectToken("diff_max").Value<double>();
+                    coin.diff_work_min = item.SelectToken("diff_work_min").Value<double>();
 
                     this.coins.Add(coin);
                 }
@@ -135,6 +137,7 @@ namespace fromHTML
 
                 item["diff_min"] = coin.diff_min;
                 item["diff_max"] = coin.diff_max;
+                item["diff_work_min"] = coin.diff_work_min;
 
                 coins.Add(item);
             }
@@ -239,9 +242,10 @@ namespace fromHTML
                                     {
                                         string str = m2.Groups[1].Captures[0].ToString();
                                         Double.TryParse(str.Replace(".", ","), out diff);
+                                        if (coin.diff_work_min >= diff)
+                                            return new KeyValuePair<double, double>(-1, 0);
 
                                         double rate = (rate_max - rate_min) / (coin.diff_max - coin.diff_min) * (diff - coin.diff_min);
-                                        rate = rate > rate_max ? rate_max : (rate < rate_min ? rate_min : rate);
                                         return new KeyValuePair<double, double>(diff, rate);
                                     }
                                     idx_ += 1;

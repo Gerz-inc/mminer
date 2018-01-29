@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static fromJSON.Plugin;
@@ -15,8 +16,7 @@ namespace fromJSON
         {
             InitializeComponent();
             this.plugin = plugin;
-
-            deleteButton.Visible = false;
+            
             modifyButton.Visible = false;
             checkButton.Visible = false;
             rateLabel.Text = "";
@@ -37,31 +37,62 @@ namespace fromJSON
                 item.SubItems.Add(String.Format("{0:0.00} - {1:0.00}", coin.diff_min, coin.diff_max));
                 item.SubItems.Add(coin.url);
                 item.SubItems.Add(coin.diff_path);
+                item.SubItems.Add("-");
                 coinsListView.Items.Add(item);
             }
 
             sel_coin = -1;
-            deleteButton.Visible = false;
             modifyButton.Visible = false;
             checkButton.Visible = false;
             rateLabel.Text = "";
         }
-        
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var idxs = (sender as ListView).SelectedIndices;
-            int idx = idxs.Count > 0 ? idxs[0] : -1;
-            sel_coin = idx;
-            if (idx < 0) return;
 
-            CoinSettings coin = plugin.coins[idx];
+        private void coinsListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            #region //определение элемента листвью
+            int curr_item = 0;
+            try
+            {
+                Point mousePositioni = coinsListView.PointToClient(Control.MousePosition);
+                ListViewHitTestInfo hiti = coinsListView.HitTest(mousePositioni);
+                curr_item = hiti.Item.Index;
+            }
+            catch (Exception ex) { }
+
+            //three step to detected which of columns of items to was clicked
+            int columnindex = 0;
+            try
+            {
+                Point mousePosition = coinsListView.PointToClient(Control.MousePosition);
+                ListViewHitTestInfo hit = coinsListView.HitTest(mousePosition);
+                columnindex = hit.Item.SubItems.IndexOf(hit.SubItem);
+            }
+            catch (Exception ex) { }
+
+            if (coinsListView.Items.Count == 0) return;
+            #endregion
+
+            // Remove
+            if (columnindex == 4)
+            {
+                plugin.coins.RemoveAt(curr_item);
+                plugin.SaveSettings();
+                saved = true;
+
+                reloadPoolsList();
+                return;
+            }
+
+            sel_coin = curr_item;
+
+            CoinSettings coin = plugin.coins[curr_item];
             coinTextBox.Text = coin.name.ToUpper();
             diffMinTextBox.Text = coin.diff_min.ToString();
             diffMaxTextBox.Text = coin.diff_max.ToString();
             urlTextBox.Text = coin.url;
             diffPathTextBox.Text = coin.diff_path;
+            minTextBox.Text = coin.diff_work_min.ToString();
 
-            deleteButton.Visible = sel_coin >= 0;
             modifyButton.Visible = sel_coin >= 0;
             checkButton.Visible = sel_coin >= 0;
             rateLabel.Text = "";
@@ -75,6 +106,7 @@ namespace fromJSON
             Double.TryParse(diffMaxTextBox.Text, out coin.diff_max);
             coin.url = urlTextBox.Text;
             coin.diff_path = diffPathTextBox.Text;
+            Double.TryParse(minTextBox.Text, out coin.diff_work_min);
             return coin;
         }
 
@@ -99,19 +131,6 @@ namespace fromJSON
             tb.Text = rgx.Replace(tb.Text, "");
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            plugin.SaveSettings();
-            saved = true;
-
-            Close();
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void modifyButton_Click(object sender, EventArgs e)
         {
             if (sel_coin < 0 || coinTextBox.Text == "") return;
@@ -119,22 +138,31 @@ namespace fromJSON
             CoinSettings coin = coinFromFields();
             plugin.coins[sel_coin] = coin;
             reloadPoolsList();
-            saved = false;
+
+            plugin.SaveSettings();
+            saved = true;
         }
-        
+
+        private void ClearForm()
+        {
+            coinTextBox.Text = "";
+            diffMinTextBox.Text = "";
+            diffMaxTextBox.Text = "";
+            urlTextBox.Text = "";
+            diffPathTextBox.Text = "";
+            minTextBox.Text = "";
+        }
+
+
         private void addButton_Click(object sender, EventArgs e)
         {
             if (coinTextBox.Text == "") return;
 
             CoinSettings coin = coinFromFields();
             plugin.coins.Add(coin);
-            reloadPoolsList();
-        }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (sel_coin < 0) return;
 
-            plugin.coins.RemoveAt(sel_coin);
+            sel_coin = -1;
+            ClearForm();
             reloadPoolsList();
         }
 

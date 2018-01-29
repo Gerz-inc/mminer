@@ -63,6 +63,7 @@ namespace fromHTML
             Double.TryParse(diffMinTextBox.Text, out coin.diff_min);
             Double.TryParse(diffMaxTextBox.Text, out coin.diff_max);
             coin.url = urlTextBox.Text;
+            Double.TryParse(minTextBox.Text, out coin.diff_work_min);
 
             coin.template = "";
             if (templatesComboBox.SelectedIndex > 0)
@@ -96,7 +97,7 @@ namespace fromHTML
         {
             coinTextBox.Text = "";
             diffMinTextBox.Text = "";
-            diffMaxTextBox.Text = "";
+            minTextBox.Text = "";
             urlTextBox.Text = "";
             templatesComboBox.SelectedIndex = 0;
         }
@@ -120,6 +121,7 @@ namespace fromHTML
             CoinSettings coin = coinFromFields();
             plugin.coins.Add(coin);
 
+            sel_coin = -1;
             ClearForm();
             reloadPoolsList();
         }
@@ -195,6 +197,7 @@ namespace fromHTML
             diffMinTextBox.Text = coin.diff_min.ToString();
             diffMaxTextBox.Text = coin.diff_max.ToString();
             urlTextBox.Text = coin.url;
+            minTextBox.Text = coin.diff_work_min.ToString();
 
             templatesComboBox.SelectedIndex = 0;
             var templ_i = plugin.GetTemplateByName(coin.template);

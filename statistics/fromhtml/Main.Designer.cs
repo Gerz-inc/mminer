@@ -51,6 +51,8 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label4 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.minTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,6 +60,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.minTextBox);
             this.groupBox1.Controls.Add(this.templatesComboBox);
             this.groupBox1.Controls.Add(this.urlTextBox);
             this.groupBox1.Controls.Add(this.rateLabel);
@@ -84,9 +88,9 @@
             // 
             this.templatesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.templatesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.templatesComboBox.Location = new System.Drawing.Point(561, 48);
+            this.templatesComboBox.Location = new System.Drawing.Point(536, 47);
             this.templatesComboBox.Name = "templatesComboBox";
-            this.templatesComboBox.Size = new System.Drawing.Size(131, 21);
+            this.templatesComboBox.Size = new System.Drawing.Size(156, 21);
             this.templatesComboBox.TabIndex = 26;
             // 
             // urlTextBox
@@ -94,7 +98,7 @@
             this.urlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.urlTextBox.Location = new System.Drawing.Point(164, 48);
             this.urlTextBox.Name = "urlTextBox";
-            this.urlTextBox.Size = new System.Drawing.Size(381, 20);
+            this.urlTextBox.Size = new System.Drawing.Size(366, 20);
             this.urlTextBox.TabIndex = 25;
             // 
             // rateLabel
@@ -132,7 +136,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(548, 23);
+            this.label5.Location = new System.Drawing.Point(481, 23);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(10, 13);
             this.label5.TabIndex = 21;
@@ -159,9 +163,9 @@
             // modifyButton
             // 
             this.modifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.modifyButton.Location = new System.Drawing.Point(500, 75);
+            this.modifyButton.Location = new System.Drawing.Point(536, 75);
             this.modifyButton.Name = "modifyButton";
-            this.modifyButton.Size = new System.Drawing.Size(97, 23);
+            this.modifyButton.Size = new System.Drawing.Size(75, 23);
             this.modifyButton.TabIndex = 15;
             this.modifyButton.Text = "Save";
             this.modifyButton.UseVisualStyleBackColor = true;
@@ -171,9 +175,9 @@
             // addButton
             // 
             this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.addButton.Location = new System.Drawing.Point(603, 75);
+            this.addButton.Location = new System.Drawing.Point(617, 75);
             this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(89, 23);
+            this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 14;
             this.addButton.Text = "Add";
             this.addButton.UseVisualStyleBackColor = true;
@@ -192,9 +196,9 @@
             // diffMaxTextBox
             // 
             this.diffMaxTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.diffMaxTextBox.Location = new System.Drawing.Point(561, 20);
+            this.diffMaxTextBox.Location = new System.Drawing.Point(494, 20);
             this.diffMaxTextBox.Name = "diffMaxTextBox";
-            this.diffMaxTextBox.Size = new System.Drawing.Size(131, 20);
+            this.diffMaxTextBox.Size = new System.Drawing.Size(75, 20);
             this.diffMaxTextBox.TabIndex = 11;
             this.diffMaxTextBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
             this.diffMaxTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
@@ -203,7 +207,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(329, 23);
+            this.label2.Location = new System.Drawing.Point(320, 23);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 13);
             this.label2.TabIndex = 10;
@@ -212,9 +216,9 @@
             // diffMinTextBox
             // 
             this.diffMinTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.diffMinTextBox.Location = new System.Drawing.Point(412, 20);
+            this.diffMinTextBox.Location = new System.Drawing.Point(403, 20);
             this.diffMinTextBox.Name = "diffMinTextBox";
-            this.diffMinTextBox.Size = new System.Drawing.Size(133, 20);
+            this.diffMinTextBox.Size = new System.Drawing.Size(75, 20);
             this.diffMinTextBox.TabIndex = 9;
             this.diffMinTextBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
             this.diffMinTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
@@ -280,6 +284,26 @@
             this.label4.Size = new System.Drawing.Size(0, 13);
             this.label4.TabIndex = 9;
             // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(587, 23);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(24, 13);
+            this.label8.TabIndex = 29;
+            this.label8.Text = "Min";
+            // 
+            // minTextBox
+            // 
+            this.minTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.minTextBox.Location = new System.Drawing.Point(617, 20);
+            this.minTextBox.Name = "minTextBox";
+            this.minTextBox.Size = new System.Drawing.Size(75, 20);
+            this.minTextBox.TabIndex = 28;
+            this.minTextBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
+            this.minTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -329,5 +353,7 @@
         private System.Windows.Forms.TextBox urlTextBox;
         private System.Windows.Forms.ComboBox templatesComboBox;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox minTextBox;
     }
 }

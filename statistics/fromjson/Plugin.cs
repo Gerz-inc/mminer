@@ -15,6 +15,7 @@ namespace fromJSON
         public struct CoinSettings
         {
             public string name;
+            public double diff_work_min;
             public double diff_min;
             public double diff_max;
             public string url;
@@ -62,6 +63,7 @@ namespace fromJSON
                     coin.diff_min = item.SelectToken("diff_min").Value<double>();
                     coin.diff_max = item.SelectToken("diff_max").Value<double>();
                     coin.diff_path = item.SelectToken("diff_path").Value<string>();
+                    coin.diff_work_min = item.SelectToken("diff_work_min").Value<double>();
                     this.coins.Add(coin);
                 }
             }
@@ -94,6 +96,7 @@ namespace fromJSON
                 item["diff_min"] = coin.diff_min;
                 item["diff_max"] = coin.diff_max;
                 item["diff_path"] = coin.diff_path;
+                item["diff_work_min"] = coin.diff_work_min;
                 coins.Add(item);
             }
             response["coins"] = coins;
@@ -143,13 +146,15 @@ namespace fromJSON
                     {
                         string str = coin.response.SelectToken(coin.diff_path).ToString();
                         Double.TryParse(str.Replace(".", ","), out diff);
+                        if (coin.diff_work_min >= diff)
+                            return new KeyValuePair<double, double>(-1, 0);
                     }
                     else if (!Double.TryParse(coin.response_raw.Replace(".", ","), out diff))
+                    {
                         return new KeyValuePair<double, double>(-1, 0);
+                    }
 
-                    diff /= 1000; // to xxx.xx
                     double rate = (rate_max - rate_min) / (coin.diff_max - coin.diff_min) * (diff - coin.diff_min);
-                    rate = rate > rate_max ? rate_max : (rate < rate_min ? rate_min : rate);
                     return new KeyValuePair<double, double>(diff, rate);
                 }
                 catch (Exception ex) { }
